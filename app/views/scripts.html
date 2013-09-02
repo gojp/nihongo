@@ -1,0 +1,13 @@
+<script type="text/javascript" src="/public/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	var search = function(term){
+		$.get('/search/' + term, {
+			data: {}
+		}).success(function(response){
+			$("#results").html(response);
+		});
+	};
+	$(".main-search").focus().on("keyup blur", function(e){search($(this).val())});
+});
+</script>

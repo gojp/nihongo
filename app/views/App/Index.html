@@ -1,0 +1,19 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<body>
+    <div class="container">
+        <div class="row-fluid page">
+            <div class="span6 offset3">
+                <form id="search">
+                  <h1>nihongo.io</h1>
+                  <input class="main-search input-large" type="text" placeholder="Type Japenese, 漢字, かな, romaji or English to search" />
+                </form>
+                <div id="results">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{{template "scripts.html" .}}
+{{template "footer.html" .}}
