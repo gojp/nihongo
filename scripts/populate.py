@@ -13,6 +13,6 @@ inserts = []
 with open(PATH_TO_EDICT2) as f:
     read_data = f.readlines()
     for line in [l.decode('EUC-JP') for l in read_data]:
-        inserts.append(EdictEntry(line))
+        inserts.append(EdictEntry(line).__dict__)
 
 collection.insert(inserts)
