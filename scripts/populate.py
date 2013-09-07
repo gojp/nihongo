@@ -15,4 +15,7 @@ with open(PATH_TO_EDICT2) as f:
     for line in [l.decode('EUC-JP') for l in read_data]:
         inserts.append(EdictEntry(line).__dict__)
 
+for i in inserts:
+    del(i['tags'])
+
 collection.insert(inserts)
