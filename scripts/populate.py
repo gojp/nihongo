@@ -17,5 +17,7 @@ with open(PATH_TO_EDICT2) as f:
 
 for i in inserts:
     del(i['tags'])
+    del(i['unparsed'])
+    print "inserting: %s" % i
 
 collection.insert(inserts)
