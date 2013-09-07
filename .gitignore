@@ -3,3 +3,4 @@ tmp/
 routes/
 *.swp
 *.pyc
+data/
