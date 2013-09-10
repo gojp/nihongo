@@ -21,7 +21,7 @@ func (a App) Search(search string) revel.Result {
 
 	// Index - not the best place for this, but okay for now...
 	index := mgo.Index{
-		Key:        []string{"reading"},
+		Key:        []string{"romaji", "furigana", "japanese", "glosses"},
 		Unique:     false,
 		DropDups:   false,
 		Background: true,
@@ -35,12 +35,14 @@ func (a App) Search(search string) revel.Result {
 	}
 
 	wordList := []models.Word{}
-	query := bson.M{} // todo: {"reading": search}
-	q := collection.Find(query)
-	iter := q.Limit(10).Iter()
+	query := bson.M{"$or": []bson.M{
+		bson.M{"romaji": bson.RegEx{".*" + search + ".*", "i"}},
+		bson.M{"furigana": search},
+		bson.M{"japanese": search},
+	}}
+	q := collection.Find(query).Sort("-common", "furigana")
+	iter := q.Limit(100).Iter()
 	iter.All(&wordList)
-
-	fmt.Println(wordList)
 
 	return a.Render(wordList)
 }
