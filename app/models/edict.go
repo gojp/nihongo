@@ -5,7 +5,11 @@ import (
 )
 
 type Word struct {
-	ID      bson.ObjectId `bson:"_id,omitempty"`
-	Info    string
-	Reading string
+	ID       bson.ObjectId `bson:"_id,omitempty"`
+	Info     string
+	Glosses  []string
+	Furigana string
+	Japanese string
+	Romaji   string
+	Common   bool
 }

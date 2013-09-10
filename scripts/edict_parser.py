@@ -37,7 +37,7 @@ be using JMdict instead.
 
 """
 
-import os, re, gzip, gettext
+import os, re, gzip, gettext, pprint
 gettext.install('pyjben', unicode=True)
 
 
@@ -111,7 +111,7 @@ def info_field_valid(i_field):
 
 class EdictEntry(object):
 
-    def __init__(self, raw_entry, quick_parsing=True):
+    def __init__(self, raw_entry, quick_parsing=False):
 
         # Japanese - note, if only a kana reading is present, it's
         # stored as "japanese", and furigana is left as None.
@@ -193,7 +193,7 @@ class EdictEntry(object):
                 if not ok:
                     #print "INVALID INFO FIELD FOUND, REVERTING"
                     #print "INFO WAS %s, GLOSS WAS %s" % (info, gloss)
-                    print info
+                    #print info
                     gloss = info + gloss
                     #print "RESTORED GLOSS:", gloss
                     break
@@ -295,11 +295,30 @@ class EdictEntry(object):
         else:
             ja = self.japanese
         native = _(u"; ").join(self.glosses)
-        return _(u"%s: %s") % (ja, native)
+        return _(u"%s: %s\n%s") % (ja, native, self.tags)
 
     def __unicode__(self):
         """Dummy string dumper"""
         return unicode(self.__repr__())
+
+
+    def to_dict(self):
+        pos = filter(lambda t: t in valid_pos_codes, self.tags)
+        fields = filter(lambda t: t in valid_foa_codes, self.tags)
+        tags = filter(lambda t: t in valid_misc_codes, self.tags)
+        dialects = filter(lambda t: t in valid_dialect_codes, self.tags)
+        furigana = self.japanese if not self.furigana else self.furigana
+        d = {
+            'japanese': filter(lambda j: j.strip(), self.japanese),
+            'furigana': furigana,
+            'glosses': filter(lambda g: g.strip(), self.glosses),
+            'pos': pos,
+            'fields': fields,
+            'tags': tags,
+            'dialects': dialects,
+            'common': 'P' in self.tags
+        }
+        return d
 
 class Parser(object):
 
@@ -367,7 +386,7 @@ class Parser(object):
         results.extend(other)
 
         # Return results
-        print results
+        # print results
         return results
 
 if __name__ == "__main__":
@@ -393,3 +412,5 @@ if __name__ == "__main__":
 
     for i, entry in enumerate(kp.search(sys.argv[2].decode(charset))):
         print _(u"Entry %d: %s") % (i+1, entry.to_string())
+        pp = pprint.PrettyPrinter(depth=2)
+        pp.pprint(entry.to_dict())
