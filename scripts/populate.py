@@ -14,8 +14,10 @@ inserts = []
 with open(PATH_TO_EDICT2) as f:
     read_data = f.readlines()
     for line in [l.decode('EUC-JP') for l in read_data]:
-    	d = EdictEntry(line).to_dict()
-    	d['romaji'] = romkan.to_roma(d['furigana'])
+        d = EdictEntry(line).to_dict()
+        d['romaji'] = romkan.to_roma(d['furigana'])
+        if 'unparsed' in d:
+            del(d['unparsed'])
         inserts.append(d)
 
 collection.insert(inserts)
