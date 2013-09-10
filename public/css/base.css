@@ -1,3 +1,7 @@
+body {
+  background: #eee;
+}
+
 #search {
 	text-align: center;
 }
@@ -24,4 +28,9 @@ input.input-large {
 
 .word .definition {
 	color: #333;
+}
+
+h1.title {
+  font-size: 64px;
+  line-height: 80px;
 }
