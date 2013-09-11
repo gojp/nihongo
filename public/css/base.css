@@ -1,5 +1,43 @@
+/* ----- Start sticky footer ----- */
+
+html, body {height: 100%;}
+
+@media (min-width: 767px) {
+
+  #wrap {
+    min-height: 100%;
+  }
+
+  #main {
+    overflow:auto;
+    padding-bottom: 120px;
+  }  /* must be same height as the footer */
+
+  #footer {
+    position: relative;
+    margin-top: -120px; /* negative value of footer height */
+    height: 120px;
+    clear:both;
+  } 
+
+  /*Opera Fix*/
+  body:before {
+    content:"";
+    height:100%;
+    float:left;
+    width:0;
+    margin-top:-32767px;
+  }
+}
+
+/* ----- End sticky footer ----- */
+
 body {
   background: #eee;
+}
+
+a, a:hover {
+  color: #9d1b1b;
 }
 
 #search {
@@ -20,17 +58,39 @@ input.input-large {
 
 .word {
 	margin-top: 20px;
+  font-size: 20px;
 }
 
 .word .title {
 	font-weight: bold;
+  float: left;
 }
-
+.word .reading {
+  float: right;
+}
 .word .definition {
+  padding-top: 10px;
+  clear: both;
 	color: #333;
 }
 
-h1.title {
-  font-size: 64px;
-  line-height: 80px;
+.header .title {
+  text-align: center;
+}
+.header .title img {
+  margin: 20px;
+  max-width: 90%;
+}
+@media (min-width: 767px) {
+  .header .title img {
+    max-width: 100%;
+  }
+}
+
+/* --- Footer styles --- */
+#footer {
+  text-align: center;
+}
+#footer p {
+  padding-top: 50px;
 }
