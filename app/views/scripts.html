@@ -8,6 +8,21 @@ $(function(){
 			$("#results").html(response);
 		});
 	};
-	$(".main-search").focus().on("keyup blur", function(e){search($(this).val())});
+	var typeTimeout = null;
+	$(".main-search").focus().on("keyup blur", function(e){
+		var val = $(this).val();
+		if (typeTimeout){
+			clearTimeout(typeTimeout);
+		}
+		typeTimeout = setTimeout(function(){
+			return (function(v){
+				search(v);
+			}(val));
+		}, 500);
+	});
+	$(".header .title").on('click', function(){
+		$('.main-search').focus();
+		return false;
+	});
 });
 </script>
