@@ -2,18 +2,27 @@
 {{template "header.html" .}}
 
 <body>
-    <div class="container">
-        <div class="row-fluid page">
-            <div class="span6 offset3">
-                <form id="search">
-                  <h1 class="title">nihongo.io</h1>
-                  <input class="main-search input-large" type="text" placeholder="Type Japanese, 漢字, かな, romaji or English to search" />
-                </form>
-                <div id="results">
+
+<div id="wrap">
+    <div id="main">
+        <div class="container">
+            <div class="row-fluid page">
+                <div class="span4 offset4 header">
+                    <div class="title">
+                        <a href="/"><img src="/public/images/nihongo.png" alt="nihongo.io" title="nihongo.io" /></a>
+                    </div>
+                </div>
+                <div class="span6 offset3">
+                    <form id="search">
+                      <input class="main-search input-large" type="text" placeholder="Type Japanese, 漢字, かな, romaji or English to search" />
+                    </form>
+                    <div id="results">
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
-</body>
+</div>
 {{template "scripts.html" .}}
 {{template "footer.html" .}}
