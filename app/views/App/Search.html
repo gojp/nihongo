@@ -1,14 +1,12 @@
 {{range .wordList}}
-	{{$entry := .}}
-	
+  {{$entry := .}}
     <div class="word">
-        <div class="title">{{$entry.Japanese}} {{if $entry.Common}}<span class="label label-success">common</span>{{end}}</div>
-        <div class="reading">{{$entry.Furigana}}</div>
-        <div class="definition">
-        	{{range $entry.Glosses}}
-				{{.}};
-			{{end}}
-        </div>
+      <div class="title">{{$entry.Japanese}} {{if $entry.Common}}<span class="label label-success">common</span>{{end}}</div>
+      <div class="reading">{{$entry.Furigana}}</div>
+      <div class="definition">
+        {{range $entry.Glosses}}
+          {{.}};
+        {{end}}
+      </div>
     </div>
-    
 {{end}}
