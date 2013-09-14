@@ -5,7 +5,7 @@
 module:testrunner
 
 GET     /                                       App.Index
-GET     /search/:search                         App.Search
+GET     /search/:query                          App.Search
 
 # Ignore favicon requests
 GET     /favicon.ico                            404
