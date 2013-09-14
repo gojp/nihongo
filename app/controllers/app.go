@@ -1,12 +1,13 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	//"github.com/gojp/nihongo/app/models"
-	//"github.com/mattbaird/elastigo/api"
-	//"github.com/mattbaird/elastigo/search"
-	//"github.com/mattbaird/elastigo/core"
+	"github.com/mattbaird/elastigo/api"
+	"github.com/mattbaird/elastigo/core"
 	"github.com/robfig/revel"
+	"log"
 )
 
 type App struct {
@@ -14,41 +15,42 @@ type App struct {
 }
 
 func (a App) Search(query string) revel.Result {
-	//api.Domain = "localhost"
-	//out, err := search.Search("edict").Type("entry").Size("100").Search(query).Result()
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//fmt.Println(out)
-
 	fmt.Println("Searching for... ", query)
+	api.Domain = "localhost"
+	searchJson := fmt.Sprintf(`{"query": { "multi_match" : {"query" : "%s", "fields" : ["romaji", "furigana", "japanese", "glosses"]}}}`, query)
+	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
+	if err != nil {
+		log.Println(err)
+	}
 
-	// Index - not the best place for this, but okay for now...
-	//index := mgo.Index{
-	//	Key:        []string{"romaji", "furigana", "japanese", "glosses"},
-	//	Unique:     false,
-	//	DropDups:   false,
-	//	Background: true,
-	//	Sparse:     true,
-	//}
+	type Word struct {
+		Romaji   string
+		Common   bool
+		Dialects []string
+		Fields   []string
+		Glosses  []string
+		Furigana string
+		Japanese string
+		Tags     []string
+		Pos      []string
+	}
 
-	//err := collection.EnsureIndex(index)
+	hits := [][]byte{}
+	for _, hit := range out.Hits.Hits {
+		hits = append(hits, hit.Source)
+	}
 
-	//if err != nil {
-	//	panic("Database connection failed")
-	//}
+	wordList := []Word{}
+	for _, hit := range hits {
+		w := Word{}
+		err := json.Unmarshal(hit, &w)
+		if err != nil {
+			fmt.Println(err)
+		}
+		wordList = append(wordList, w)
+	}
 
-	//wordList := []models.Word{}
-	//query := bson.M{"$or": []bson.M{
-	//	bson.M{"romaji": bson.RegEx{".*" + search + ".*", "i"}},
-	//	bson.M{"furigana": search},
-	//	bson.M{"japanese": search},
-	//}}
-	//q := collection.Find(query).Sort("-common", "furigana")
-	//iter := q.Limit(100).Iter()
-	//iter.All(&wordList)
-
-	return a.Render()
+	return a.Render(wordList)
 }
 
 func (c App) Index() revel.Result {
