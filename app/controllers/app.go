@@ -44,7 +44,7 @@ func (a App) Search(query string) revel.Result {
 		w := Word{}
 		err := json.Unmarshal(hit, &w)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		wordList = append(wordList, w)
 	}
