@@ -27,7 +27,7 @@ else:
     conn.create_index("edict")
     conn.put_mapping("entry")
 
-PATH_TO_EDICT2 = '/Users/shawn/Downloads/edict2'
+PATH_TO_EDICT2 = '/data/edict2'
 
 with open(PATH_TO_EDICT2) as f:
     read_data = f.readlines()
