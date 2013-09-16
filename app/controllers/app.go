@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gojp/nihongo/app/routes"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
 	"github.com/robfig/revel"
@@ -13,25 +14,25 @@ type App struct {
 	*revel.Controller
 }
 
-func (a App) Search(query string) revel.Result {
+type Word struct {
+	Romaji   string
+	Common   bool
+	Dialects []string
+	Fields   []string
+	Glosses  []string
+	Furigana string
+	Japanese string
+	Tags     []string
+	Pos      []string
+}
+
+func search(query string) []Word {
 	fmt.Println("Searching for... ", query)
 	api.Domain = "localhost"
 	searchJson := fmt.Sprintf(`{"query": { "multi_match" : {"query" : "%s", "fields" : ["romaji", "furigana", "japanese", "glosses"]}}}`, query)
 	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
 	if err != nil {
 		log.Println(err)
-	}
-
-	type Word struct {
-		Romaji   string
-		Common   bool
-		Dialects []string
-		Fields   []string
-		Glosses  []string
-		Furigana string
-		Japanese string
-		Tags     []string
-		Pos      []string
 	}
 
 	hits := [][]byte{}
@@ -48,8 +49,25 @@ func (a App) Search(query string) revel.Result {
 		}
 		wordList = append(wordList, w)
 	}
+	return wordList
+}
 
+func (a App) Search(query string) revel.Result {
+	wordList := search(query)
 	return a.Render(wordList)
+}
+
+func (c App) Details(query string) revel.Result {
+	wordList := search(query)
+	pageTitle := query + " in Japanese"
+	return c.Render(wordList, query, pageTitle)
+}
+
+func (c App) SearchGet() revel.Result {
+	if query, ok := c.Params.Values["q"]; ok && len(query) > 0 {
+		return c.Redirect(routes.App.Details(query[0]))
+	}
+	return c.Redirect(routes.App.Index())
 }
 
 func (c App) About() revel.Result {
