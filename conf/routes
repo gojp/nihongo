@@ -5,6 +5,7 @@
 module:testrunner
 
 GET     /                                       App.Index
+GET     /about                                  App.About
 GET     /search/:query                          App.Search
 
 # Ignore favicon requests
