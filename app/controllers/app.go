@@ -52,6 +52,10 @@ func (a App) Search(query string) revel.Result {
 	return a.Render(wordList)
 }
 
+func (c App) About() revel.Result {
+	return c.Render()
+}
+
 func (c App) Index() revel.Result {
 	return c.Render()
 }
