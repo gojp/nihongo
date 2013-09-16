@@ -1,4 +1,4 @@
-<script type="text/javascript" src="/public/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/public/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript">
 $(function(){
 	var search = function(term){
@@ -18,7 +18,7 @@ $(function(){
 			return (function(v){
 				search(v);
 			}(val));
-		}, 500);
+		}, 100);
 	});
 	$(".header .title").on('click', function(){
 		$('.main-search').focus();
