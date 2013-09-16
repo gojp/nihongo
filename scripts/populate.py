@@ -2,7 +2,7 @@ from edict_parser import EdictEntry
 from pymongo import Connection
 from pyes import ES
 import romkan
-import simplejson as json
+import json
 import subprocess
 import sys
 
