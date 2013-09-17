@@ -8,6 +8,7 @@ import (
 	"github.com/mattbaird/elastigo/core"
 	"github.com/robfig/revel"
 	"log"
+	"strings"
 )
 
 type App struct {
@@ -61,6 +62,13 @@ func (a App) Search(query string) revel.Result {
 }
 
 func (c App) Details(query string) revel.Result {
+	if len(query) == 0 {
+		return c.Redirect(routes.App.Index())
+	}
+	if (strings.Contains(query, " ")) {
+		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "-", -1)))
+	}
+	query = strings.Replace(query, "-", " ", -1)
 	wordList := search(query)
 	pageTitle := query + " in Japanese"
 	return c.Render(wordList, query, pageTitle)
