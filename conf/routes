@@ -17,8 +17,9 @@ GET     /robots.txt                             Static.Serve("public/misc/robots
 # Map static resources from the /app/public folder to the /public path
 GET     /public/*filepath                       Static.Serve("public")
 
+# Catch any queries for words
+GET     /:query                                 App.Details
+
 # Catch all
 *       /:controller/:action                    :controller.:action
 
-# Catch any queries for words
-GET     /q/:query                                 App.Details
