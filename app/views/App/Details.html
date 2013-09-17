@@ -1,0 +1,38 @@
+{{set . "title" .pageTitle }}
+{{template "header.html" .}}
+
+<body>
+<div id="wrap">
+  <div id="main">
+    <div class="container">
+      <div class="page">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="form-horizontal" id="search" method="get" action="/search">
+              <div class="form-group">
+                <div class="col-lg-2">
+                  <a href="/"><img src="/public/images/nihongo.png" style="max-width: 100%;" alt="nihongo.io" title="nihongo.io" /></a>
+                </div>
+                <div class="col-lg-10">
+                  <input class="main-search input-lg form-control" type="search" name="q" placeholder="Type Japanese, 漢字, かな, romaji or English to search" value="{{ .query }}" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            {{template "App/Search.html" .}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="/public/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+$(function(){
+  $(".main-search").focus();
+});
+</script>
+{{template "footer.html" .}}

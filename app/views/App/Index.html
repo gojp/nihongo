@@ -1,4 +1,3 @@
-{{set . "title" "Home"}}
 {{template "header.html" .}}
 
 <body>
@@ -6,17 +5,25 @@
 <div id="wrap">
   <div id="main">
     <div class="container">
-      <div class="row-fluid page">
-        <div class="span4 offset4 header">
-          <div class="title">
-            <a href="/"><img src="/public/images/nihongo.png" alt="nihongo.io" title="nihongo.io" /></a>
+      <div class="page">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3 header">
+            <div class="title">
+              <a href="/"><img src="/public/images/nihongo.png" alt="nihongo.io" title="nihongo.io" /></a>
+            </div>
           </div>
         </div>
-        <div class="span6 offset3">
-          <form id="search">
-            <input class="main-search input-large" type="text" placeholder="Type Japanese, 漢字, かな, romaji or English to search" />
-          </form>
-          <div id="results">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+            <form class="form-horizontal" id="search" method="get" action="/search">
+              <div class="form-group">
+                <div class="col-lg-12">
+                  <input class="main-search input-lg form-control" type="search" name="q" placeholder="Type Japanese, 漢字, かな, romaji or English to search" />
+                </div>
+              </div>
+            </form>
+            <div id="results">
+            </div>
           </div>
         </div>
       </div>
