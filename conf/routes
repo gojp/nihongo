@@ -8,13 +8,17 @@ GET     /                                       App.Index
 GET     /info/about                             App.About
 GET     /search                                 App.SearchGet
 GET     /search/:query                          App.Search
-GET     /:query                                 App.Details
 
-# Ignore favicon requests
-GET     /favicon.ico                            404
+# Favicon and indexing stuff
+GET     /favicon.ico                            Static.Serve("public/images/favicon.ico")
+GET     /sitemap.xml                            Static.Serve("public/misc/sitemap.xml")
+GET     /robots.txt                             Static.Serve("public/misc/robots.txt")
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/*filepath                       Static.Serve("public")
 
 # Catch all
 *       /:controller/:action                    :controller.:action
+
+# Catch any queries for words
+GET     /q/:query                                 App.Details

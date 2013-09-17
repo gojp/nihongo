@@ -8,7 +8,8 @@ $(function(){
 			$("#results").html(response);
 		});
 	};
-	var typeTimeout = null;
+	var typeTimeout = null,
+		lastSearch = null;
 	$(".main-search").focus().on("keyup blur", function(e){
 		var val = $(this).val();
 		if (typeTimeout){
@@ -16,9 +17,12 @@ $(function(){
 		}
 		typeTimeout = setTimeout(function(){
 			return (function(v){
-				search(v);
+				if (v.length && v != lastSearch) {
+					lastSearch = v;
+					search(v);
+				}
 			}(val));
-		}, 100);
+		}, 200);
 	});
 	$(".header .title").on('click', function(){
 		$('.main-search').focus();
