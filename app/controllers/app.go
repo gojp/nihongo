@@ -53,6 +53,9 @@ func search(query string) []Word {
 }
 
 func (a App) Search(query string) revel.Result {
+	if len(query) == 0 {
+		return a.Redirect(routes.App.Index())
+	}
 	wordList := search(query)
 	return a.Render(wordList)
 }
