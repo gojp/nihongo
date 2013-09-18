@@ -1,4 +1,4 @@
-from edict_parser import EdictEntry
+from edict2_parser import Parser
 from pymongo import Connection
 from pyes import ES
 import romkan
@@ -29,14 +29,10 @@ else:
 
 PATH_TO_EDICT2 = '../data/edict2'
 
-with open(PATH_TO_EDICT2) as f:
-    read_data = f.readlines()
-    for i, line in enumerate([l.decode('EUC-JP') for l in read_data]):
-        d = EdictEntry(line).to_dict()
-        d['romaji'] = romkan.to_roma(d['furigana'])
-        if 'unparsed' in d:
-            del(d['unparsed'])
-        inserts.append(d)
+parser = Parser(PATH_TO_EDICT2)
+for e in parser.parse():
+    e['romaji'] = romkan.to_roma(e['furigana'])
+    inserts.append(e)
 
 if mongo:
     collection.insert(inserts)
@@ -49,5 +45,6 @@ else:
             index_line = '{"index":{"_index":"edict","_type": "entry", "_id": "%s"}}' % str(i + 1)
             f.write(index_line + '\n')
             f.write(json.dumps(d) + '\n')
+        print "INSERTED %d ENTRIES!" % i
 
 subprocess.Popen(['curl', '-s', '-XPOST', '%s/_bulk' % ELASTICSEARCH_URI, '--data-binary', '@output.json'])

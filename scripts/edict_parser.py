@@ -37,6 +37,12 @@ be using JMdict instead.
 
 """
 
+
+# EDICT2 FORMAT:
+#
+#    KANJI-1;KANJI-2 [KANA-1;KANA-2] /(general information) (see xxxx) gloss/gloss/.../
+
+
 import os, re, gzip, gettext, pprint
 gettext.install('pyjben', unicode=True)
 
@@ -242,70 +248,6 @@ class EdictEntry(object):
 
         # Get native language data
         self.glosses = [g for g in ndata.split(u'/') if g]
-
-# EDICT FORMAT:
-#    KANJI [KANA] /(general information) gloss/gloss/.../
-# or
-#    KANA /(general information) gloss/gloss/.../
-#
-# Where there are multiple senses, these are indicated by (1), (2),
-# etc. before the first gloss in each sense. As this format only
-# allows a single kanji headword and reading, entries are generated
-# for each possible headword/reading combination. As the format
-# restricts Japanese characters to the kanji and kana fields, any
-# cross-reference data and other informational fields are omitted.
-
-# EDICT2 FORMAT:
-#
-#    KANJI-1;KANJI-2 [KANA-1;KANA-2] /(general information) (see xxxx) gloss/gloss/.../
-
-
-
-
-
-
-#        # First 2 fields are always the same
-#        pieces = raw_entry.split(None, 2)
-#        misc = pieces.pop()
-#        self.jis = int(pieces.pop(), 16)
-#        self.literal = pieces.pop()
-#
-#        # Parse the remainder
-#        si = ei = 0
-#        while si < len(misc):
-#            c = misc[si]
-#            i = ord(c)
-#            if c == u' ':
-#                si += 1
-#                continue
-#            if i > 0xFF or c in (u'-', u'.'):
-#                # Parse Japanese
-#                ei = misc.find(u' ', si+1)
-#                if ei == -1:
-#                    ei = len(misc) + 1
-#                sub = misc[si:ei]
-#
-#                self._parse_japanese(state, sub)
-#            elif c == u'{':
-#                # Parse Translation
-#                si += 1  # Move si inside of {
-#                ei = misc.find(u'}', si+1)
-#                if ei == -1:
-#                    ei = len(misc) + 1
-#                sub = misc[si:ei]
-#                ei += 1  # Move ei past }
-#
-#                self.meanings.append(sub)
-#            else:
-#                # Parse info field
-#                ei = misc.find(u' ', si+1)
-#                if ei == -1:
-#                    ei = len(misc) + 1
-#                sub = misc[si:ei]
-#
-#                self._parse_info(state, sub)
-#
-#            si = ei + 1
 
     def to_string(self, **kwargs):
         if self.furigana:
