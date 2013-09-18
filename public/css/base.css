@@ -60,16 +60,18 @@ a, a:hover {
 }
 
 .word .title {
-	font-weight: bold;
+	font-weight: normal;
+  font-size: 24px;
   float: left;
 }
 .word .reading {
   float: right;
 }
 .word .definition {
-  padding-top: 10px;
+  padding-top: 6px;
   clear: both;
-	color: #333;
+	color: #444;
+  font-size: 16px;
 }
 
 .header .title {

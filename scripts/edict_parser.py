@@ -78,8 +78,14 @@ valid_dialect_codes = set((
 
 # Grab all ()'s before a gloss
 all_paren_match = re.compile("^(\([^)]*\)[ ]*)+")
+
+# Grab all ()'s after a gloss
+back_paren_match = re.compile("^.*(\([^)]*\)[ ]*)+$")
+
 # Grab the first () data entry, with group(1) set to the contents
 paren_match = re.compile(u"^[ ]*\(([^)]+)\)[ ]*")
+
+b_paren_match = re.compile(u"^.*[ ]*\(([^)]+)\)[ ]*")
 
 def info_field_valid(i_field):
     """Returns whether a given info code is valid."""
@@ -123,6 +129,7 @@ class EdictEntry(object):
         self.tags = set()
         # Currently unhandled stuff goes here...
         self.unparsed = []
+        self.ent_seq = None
 
         # Most people don't need ultra-fancy parsing and can happily
         # take glosses with keywords stuck in them.  In this case,
@@ -141,26 +148,8 @@ class EdictEntry(object):
         else:
             self.parse_entry(raw_entry)
 
-    def parse_entry(self, raw_entry):
-        if not raw_entry:
-            return None
-
-        jdata, ndata = raw_entry.split(u'/', 1)
-
-        # Get Japanese
-        pieces = jdata.split(u'[', 1)
-        self.japanese = pieces[0].strip()
-        if len(pieces) > 1:
-            # Store furigana without '[]'
-            self.furigana = pieces[1].strip()[:-1]
-
-        #if self.furigana:
-        #    print "JAPANESE: %s, FURIGANA: %s" % (self.japanese, self.furigana)
-        #else:
-        #    print "JAPANESE: %s" % self.japanese
-
-        # Get native language data
-        glosses = ndata.split(u'/')
+    def parse_glosses(self, glosses, back=False):
+        g = []
         for gloss in glosses:
             # For each gloss, we need to check for ()'s at the beginning.
             # Multiple such ()'s may be present.
@@ -171,7 +160,9 @@ class EdictEntry(object):
             #print "Unparsed gloss: [%s]" % gloss
 
             info = None
-            m = all_paren_match.match(gloss)
+            m = all_paren_match.match(gloss) if not back else back_paren_match.match(gloss)
+            # if back:
+            #     print gloss, back_paren_match.match(gloss)
             if m:
                 info = m.group(0)
             if info:
@@ -180,7 +171,7 @@ class EdictEntry(object):
                 #print "Info field captured: [%s]" % info
 
             while info:
-                m = paren_match.match(info)
+                m = paren_match.match(info) if not back else b_paren_match.match(info)
                 #if not m: break  # Shouldn't ever happen...
                 i_field = m.group(1)
                 #print "INFO FIELD FOUND:", i_field
@@ -207,7 +198,34 @@ class EdictEntry(object):
                 info = info[next_i:]
 
             #print "APPENDING GLOSS:", gloss
-            self.glosses.append(gloss)
+            g.append(gloss)
+        return g
+
+    def parse_entry(self, raw_entry):
+        if not raw_entry:
+            return None
+
+        jdata, ndata = raw_entry.split(u'/', 1)
+
+        # Get Japanese
+        pieces = jdata.split(u'[', 1)
+        self.japanese = map(unicode.strip, pieces[0].strip().split(';'))
+        self.japanese = self.parse_glosses(self.japanese, back=True)
+
+        if len(pieces) > 1:
+            # Store furigana without '[]'
+            self.furigana = pieces[1].strip()[:-1]
+
+        #if self.furigana:
+        #    print "JAPANESE: %s, FURIGANA: %s" % (self.japanese, self.furigana)
+        #else:
+        #    print "JAPANESE: %s" % self.japanese
+
+        # Get native language data
+        glosses = ndata.split(u'/')
+        self.glosses = self.parse_glosses(glosses)
+
+        self.ent_seq = self.glosses.pop()
 
     def parse_entry_quick(self, raw_entry):
         if not raw_entry:
@@ -316,7 +334,8 @@ class EdictEntry(object):
             'fields': fields,
             'tags': tags,
             'dialects': dialects,
-            'common': 'P' in self.tags
+            'common': 'P' in self.tags,
+            'ent': self.ent_seq
         }
         return d
 
@@ -363,7 +382,8 @@ class Parser(object):
             for line in lines:
                 entry = EdictEntry(line)
                 if self.use_cache:
-                    self.cache[entry.japanese] = entry
+                    for j in entry.japanese:
+                        self.cache[j] = entry
                 proc_entry(entry)
 
         # Very simple sorting of results.
