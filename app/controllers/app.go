@@ -15,12 +15,27 @@ type App struct {
 	*revel.Controller
 }
 
+type Gloss struct {
+	English  string
+	Tags     []string
+	Related  []string
+	Common   bool
+}
+
+type Highlight struct {
+	Furigana string
+	Japanese string
+	Romaji string
+	English []string
+}
+
 type Word struct {
 	Romaji   string
 	Common   bool
 	Dialects []string
 	Fields   []string
-	Glosses  []string
+	Glosses  []Gloss
+	English  []string
 	Furigana string
 	Japanese string
 	Tags     []string
@@ -30,7 +45,7 @@ type Word struct {
 func search(query string) []Word {
 	fmt.Println("Searching for... ", query)
 	api.Domain = "localhost"
-	searchJson := fmt.Sprintf(`{"query": { "multi_match" : {"query" : "%s", "fields" : ["romaji", "furigana", "japanese", "glosses"]}}}`, query)
+	searchJson := fmt.Sprintf(`{"query": {"multi_match": {"query": "%s", "fields": ["japanese", "furigana", "romaji", "english"]}}, "highlight": {"fields": {"furigana": {}, "japanese": {}, "romaji": {}, "english": {}}}}`, query)
 	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
 	if err != nil {
 		log.Println(err)

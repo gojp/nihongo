@@ -4,7 +4,8 @@
       <div class="title">{{$entry.Japanese}} {{if $entry.Common}}<span class="label label-success">common</span>{{end}}</div>
       <div class="reading">{{$entry.Furigana}}</div>
       <div class="definition">
-        {{range $i, $gloss := $entry.Glosses}}
+        {{range $i, $gloss := $entry.English}}
+
           <div class="gloss">{{add $i 1}}. {{$gloss}}</div>
         {{end}}
       </div>
