@@ -5,7 +5,7 @@
 <div id="wrap">
   <div id="main">
     <div class="container">
-      <div class="page">
+      <div id="page" class="page">
         <div class="row">
           <div class="col-md-12">
             <form class="form-horizontal" id="search" method="get" action="/search">
@@ -30,9 +30,5 @@
   </div>
 </div>
 <script type="text/javascript" src="/public/js/jquery-1.10.2.min.js"></script>
-<script type="text/javascript">
-$(function(){
-  $(".main-search").focus();
-});
-</script>
+{{template "scripts.html" .}}
 {{template "footer.html" .}}
