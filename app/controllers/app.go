@@ -3,30 +3,35 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
+	"github.com/jgraham909/revmgo"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
 	"github.com/robfig/revel"
+	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 	"log"
 	"strings"
 )
 
 type App struct {
 	*revel.Controller
+	revmgo.MongoController
 }
 
 type Gloss struct {
-	English  string
-	Tags     []string
-	Related  []string
-	Common   bool
+	English string
+	Tags    []string
+	Related []string
+	Common  bool
 }
 
 type Highlight struct {
 	Furigana string
 	Japanese string
-	Romaji string
-	English []string
+	Romaji   string
+	English  []string
 }
 
 type Word struct {
@@ -80,12 +85,29 @@ func (c App) Details(query string) revel.Result {
 	if len(query) == 0 {
 		return c.Redirect(routes.App.Index())
 	}
-	if (strings.Contains(query, " ")) {
+	if strings.Contains(query, " ") {
 		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "-", -1)))
 	}
 	query = strings.Replace(query, "-", " ", -1)
 	wordList := search(query)
 	pageTitle := query + " in Japanese"
+
+	// log this call in mongo
+	collection := c.MongoSession.DB("greenbook").C("hits")
+	_, err := collection.Upsert(bson.M{"term": query}, bson.M{"$inc": bson.M{"count": 1}})
+	if err != nil {
+		// mongo failed to log, but who cares
+	}
+
+	index := mgo.Index{
+		Key:        []string{"count"},
+		Unique:     false,
+		DropDups:   false,
+		Background: true,
+		Sparse:     true,
+	}
+	collection.EnsureIndex(index)
+
 	return c.Render(wordList, query, pageTitle)
 }
 
@@ -101,5 +123,14 @@ func (c App) About() revel.Result {
 }
 
 func (c App) Index() revel.Result {
-	return c.Render()
+
+	// get the popular searches
+	collection := c.MongoSession.DB("greenbook").C("hits")
+	q := collection.Find(nil).Sort("-count")
+
+	termList := []models.SearchTerm{}
+	iter := q.Limit(10).Iter()
+	iter.All(&termList)
+
+	return c.Render(termList)
 }
