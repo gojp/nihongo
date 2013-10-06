@@ -1,5 +1,7 @@
     <div id="footer">
+        {{if .termList}}
         Example searches:
+        {{end}}
         {{range .termList}}
             {{$entry := .}}
             <a href="/{{$entry.Term}}" title="{{$entry.Term}} in Japanese">{{$entry.Term}}</a>
