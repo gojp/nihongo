@@ -85,7 +85,6 @@ if mongo:
         collection.insert(inserts)
         inserts = get_inserts()
 else:
-    f = open('output.json', 'w')
     inserts = get_inserts()
     inserted_count = 0
 
