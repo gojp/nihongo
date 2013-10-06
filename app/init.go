@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
 )
 
@@ -18,4 +19,6 @@ func init() {
 		revel.InterceptorFilter,       // Run interceptors around the action.
 		revel.ActionInvoker,           // Invoke the action.
 	}
+
+	revel.OnAppStart(revmgo.AppInit)
 }
