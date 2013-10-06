@@ -13,3 +13,9 @@ type Word struct {
 	Romaji   string
 	Common   bool
 }
+
+type SearchTerm struct {
+	ID    bson.ObjectId `bson:"_id,omitempty"`
+	Term  string
+	Count int
+}
