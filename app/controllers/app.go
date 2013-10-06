@@ -16,17 +16,17 @@ type App struct {
 }
 
 type Gloss struct {
-	English  string
-	Tags     []string
-	Related  []string
-	Common   bool
+	English string
+	Tags    []string
+	Related []string
+	Common  bool
 }
 
 type Highlight struct {
 	Furigana string
 	Japanese string
-	Romaji string
-	English []string
+	Romaji   string
+	English  []string
 }
 
 type Word struct {
@@ -80,7 +80,7 @@ func (c App) Details(query string) revel.Result {
 	if len(query) == 0 {
 		return c.Redirect(routes.App.Index())
 	}
-	if (strings.Contains(query, " ")) {
+	if strings.Contains(query, " ") {
 		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "-", -1)))
 	}
 	query = strings.Replace(query, "-", " ", -1)
