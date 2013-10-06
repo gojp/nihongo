@@ -12,6 +12,7 @@ import (
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"log"
+	"regexp"
 	"strings"
 )
 
@@ -47,6 +48,17 @@ type Word struct {
 	Pos      []string
 }
 
+func highlight(query string, word Word) Word {
+	re := regexp.MustCompile(query)
+	queryHighlighted := "<strong>" + query + "</strong>"
+	word.Japanese = re.ReplaceAllString(word.Japanese, queryHighlighted)
+	for i, e := range word.English {
+		e = re.ReplaceAllString(e, queryHighlighted)
+		word.English[i] = e
+	}
+	return word
+}
+
 func search(query string) []Word {
 	fmt.Println("Searching for... ", query)
 	api.Domain = "localhost"
@@ -68,7 +80,7 @@ func search(query string) []Word {
 		if err != nil {
 			log.Println(err)
 		}
-		wordList = append(wordList, w)
+		wordList = append(wordList, highlight(query, w))
 	}
 	return wordList
 }
