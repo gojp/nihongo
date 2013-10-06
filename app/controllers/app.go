@@ -48,15 +48,14 @@ type Word struct {
 	Pos      []string
 }
 
-func highlight(query string, word Word) Word {
+func (w *Word) highlightQuery(query string) {
 	re := regexp.MustCompile(query)
 	queryHighlighted := "<strong>" + query + "</strong>"
-	word.Japanese = re.ReplaceAllString(word.Japanese, queryHighlighted)
-	for i, e := range word.English {
+	w.Japanese = re.ReplaceAllString(w.Japanese, queryHighlighted)
+	for i, e := range w.English {
 		e = re.ReplaceAllString(e, queryHighlighted)
-		word.English[i] = e
+		w.English[i] = e
 	}
-	return word
 }
 
 func search(query string) []Word {
@@ -80,7 +79,8 @@ func search(query string) []Word {
 		if err != nil {
 			log.Println(err)
 		}
-		wordList = append(wordList, highlight(query, w))
+		w.highlightQuery(query)
+		wordList = append(wordList, w)
 	}
 	return wordList
 }
