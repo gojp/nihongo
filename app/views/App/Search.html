@@ -1,13 +1,25 @@
+<table class="results-table">
 {{range .wordList}}
   {{$entry := .}}
-    <div class="word">
-      <div class="title">{{html $entry.Japanese}} {{if $entry.Common}}<span class="label label-success">common</span>{{end}}</div>
-      <div class="reading">{{html $entry.Furigana}}</div>
-      <div class="definition">
-        {{range $i, $gloss := $entry.English}}
-
-          <div class="gloss">{{add $i 1}}. {{html $gloss}}</div>
+  <tr class="word">
+    <td class="title">
+      <a class="main-entry" href="/{{$entry.Japanese}}">{{$entry.Japanese}}</a>
+      {{if $entry.Common}}
+      <div class="label label-success label-common">common</div>
+      {{end}}
+      <span class="reading">
+        {{if eq $entry.Furigana $entry.Japanese}}
+        {{else}}
+        {{$entry.Furigana}}
         {{end}}
-      </div>
-    </div>
+      </span>
+    </td>
+    <td class="definition">
+      {{range $i, $gloss := $entry.English}}
+        <div class="gloss">{{add $i 1}}. {{$gloss}}</div>
+      {{end}}
+    </td>
+  </div>
+  </tr>
 {{end}}
+</table>

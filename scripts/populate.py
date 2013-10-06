@@ -19,7 +19,7 @@ inserts = []
 if mongo:
     MONGO_URI = 'localhost'
     c = Connection(MONGO_URI)
-    mongo_db = c['greenbook']
+    mongo_db = c['nihongo']
     collection = mongo_db['edict']
 elif es:
     ELASTICSEARCH_URI = 'localhost:9200'
@@ -81,10 +81,14 @@ def get_inserts(max_chunk=10000):
 counter = 0
 
 if mongo:
-    inserts = get_inserts()
-    while inserts:
-        collection.insert(inserts)
-        inserts = get_inserts()
+    collection.drop()
+    for insert_chunk in get_inserts():
+        bulk_list = []
+        for d in insert_chunk:
+            counter += 1
+            bulk_list.append(d)
+        collection.insert(bulk_list)
+        print("Inserted {}".format(counter))
 else:
     inserts = get_inserts()
     inserted_count = 0
