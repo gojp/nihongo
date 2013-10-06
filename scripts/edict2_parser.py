@@ -223,5 +223,5 @@ class Parser(object):
 
 if __name__ == '__main__':
     parser = Parser('../data/edict2')
-        for e in parser.parse():
-            print e
+    for e in parser.parse():
+        print e
