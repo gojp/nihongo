@@ -2,11 +2,15 @@
 <script type="text/javascript">
 $(function(){
 	var search = function(term){
+		$('.row.logo').hide();
 		$.get('/search/' + term, {
 			data: {}
 		}).success(function(response){
 			$("#results").html(response);
 		});
+		if (_gaq) {
+			_gaq.push(['_trackPageview', '/' + term]);
+		}
 	};
 	var typeTimeout = null,
 		lastSearch = null;
@@ -27,6 +31,9 @@ $(function(){
 	$(".header .title").on('click', function(){
 		$('.main-search').focus();
 		return false;
+	});
+	$('.results-table .word').on('click', function(){
+		window.location.href = $(this).find('a.main-entry').attr('href');
 	});
 });
 </script>
