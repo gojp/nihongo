@@ -36,6 +36,14 @@ body {
   background: #eee;
 }
 
+#page {
+  margin-top: 20px;
+}
+
+.main-search {
+
+}
+
 a, a:hover {
   color: #9d1b1b;
 }
@@ -49,29 +57,50 @@ a, a:hover {
   margin-bottom: 10px;
 }
 
+.results-table {
+  table-layout:fixed; 
+  width:100%;
+}
+.results-table td {
+  padding: 10px;
+}
 .word {
 	margin-top: 20px;
   font-size: 20px;
   padding: 10px;
 }
-
+.word:hover {
+  background: #F4D8D8 !important;
+  cursor: pointer;
+}
 .word:nth-child(2n) {
   background: #f3f3f3;
 }
-
+.word .common {
+  width: 70px;
+}
 .word .title {
 	font-weight: normal;
   font-size: 24px;
-  float: left;
 }
 .word .reading {
+  font-size: 18px;
+  line-height: 24px;
+  padding: 3px 0;
   float: right;
+  width: 40%;
+  text-align: left;
 }
 .word .definition {
-  padding-top: 6px;
-  clear: both;
 	color: #444;
   font-size: 16px;
+}
+.word .label-common {
+  font-size: 10px;
+}
+.word a.main-entry {
+  color: inherit;
+  text-decoration: none;
 }
 
 .header .title {
