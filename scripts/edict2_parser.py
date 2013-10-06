@@ -11,7 +11,7 @@
 #    KANJI-1;KANJI-2 [KANA-1;KANA-2] /(general information) (see xxxx) gloss/gloss/.../
 #    垜;安土;堋 [あずち] /(n) mound on which targets are placed (in archery)/firing mound/EntL2542010/
 
-import os, re, gzip, gettext, pprint, json
+import os, re, gzip, gettext, pprint
 
 # Part of speech codes
 valid_pos_codes = list(set((
@@ -223,7 +223,5 @@ class Parser(object):
 
 if __name__ == '__main__':
     parser = Parser('../data/edict2')
-    for i, e in enumerate(parser.parse()):
-        print json.dumps({"index": {"_index":"edict","_type": "entry", "_id": str(i)}})
-        print json.dumps(e)
-    print '\n'
+        for e in parser.parse():
+            print e
