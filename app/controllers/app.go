@@ -48,6 +48,7 @@ type Word struct {
 	Pos      []string
 }
 
+// Wrap the query in <strong> tags so that we can highlight it in the results
 func (w *Word) highlightQuery(query string) {
 	re := regexp.MustCompile(query)
 	queryHighlighted := "<strong>" + query + "</strong>"
