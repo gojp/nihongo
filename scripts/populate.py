@@ -7,12 +7,13 @@ import subprocess
 import sys
 
 if len(sys.argv) <= 1:
-    print 'usage: populate.py [es/mongo]'
+    print 'usage: populate.py [es/mongo/print]'
     sys.exit(1)
 
-es_or_mongo = sys.argv[1]
+es_mongo_print = sys.argv[1]
 
-mongo = es_or_mongo == 'mongo'
+mongo = es_mongo_print == 'mongo'
+es = es_mongo_print == 'es'
 
 inserts = []
 if mongo:
@@ -20,7 +21,7 @@ if mongo:
     c = Connection(MONGO_URI)
     mongo_db = c['nihongo']
     collection = mongo_db['edict']
-else:
+elif es:
     ELASTICSEARCH_URI = 'localhost:9200'
     es = rawes.Elastic(ELASTICSEARCH_URI)
 
@@ -89,7 +90,6 @@ if mongo:
         collection.insert(bulk_list)
         print("Inserted {}".format(counter))
 else:
-    f = open('output.json', 'w')
     inserts = get_inserts()
     inserted_count = 0
 
@@ -102,13 +102,14 @@ else:
             # before each entry
             # http://www.elasticsearch.org/guide/reference/api/bulk/
 
-            bulk_list.append({
-                "index":
-                    {"_index":"edict","_type": "entry", "_id": str(counter + 1)}
-                })
+            index_line = {"index": {"_index":"edict","_type": "entry", "_id": str(counter + 1)}}
+            bulk_list.append(index_line)
             bulk_list.append(d)
+            if not es:
+                print json.dumps(index_line)
+                print json.dumps(d)
 
-        if bulk_list:
+        if bulk_list and es:
             bulk_body = '\n'.join(map(json.dumps, bulk_list))+'\n'
             es.post('edict/entry/_bulk', data=bulk_body)
             bulk_list = []
@@ -119,6 +120,3 @@ else:
             # ----
             # if counter > 100000:
             #     return False
-
-        
-
