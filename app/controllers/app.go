@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gojp/kana"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
 	"github.com/jgraham909/revmgo"
@@ -50,9 +51,27 @@ type Word struct {
 
 // Wrap the query in <strong> tags so that we can highlight it in the results
 func (w *Word) highlightQuery(query string) {
-	re := regexp.MustCompile(query)
+	re := regexp.MustCompile(`\b` + query + `\b`)
+	// convert the query to hiragana and katakana. if it's already in
+	// hiragana or katakana, it will just be the same.
+	kana := kana.NewKana()
+	h := kana.Romaji_to_hiragana(query)
+	hiraganaRe := regexp.MustCompile(h)
+	k := kana.Romaji_to_katakana(query)
+	katakanaRe := regexp.MustCompile(k)
+	// wrap the query in strong tags
 	queryHighlighted := "<strong>" + query + "</strong>"
+	katakanaHighlighted := "<strong>" + k + "</strong>"
+	hiraganaHighlighted := "<strong>" + h + "</strong>"
+	// if the query is originally in Japanese, highlight it
 	w.Japanese = re.ReplaceAllString(w.Japanese, queryHighlighted)
+	// highlight the katakana or hiragana that has been converted from romaji
+	w.Japanese = hiraganaRe.ReplaceAllString(w.Japanese, hiraganaHighlighted)
+	w.Japanese = katakanaRe.ReplaceAllString(w.Japanese, katakanaHighlighted)
+	// highlight the furigana too, same as above
+	w.Furigana = hiraganaRe.ReplaceAllString(w.Furigana, hiraganaHighlighted)
+	w.Furigana = katakanaRe.ReplaceAllString(w.Furigana, katakanaHighlighted)
+	// highlight the query inside the list of English definitions
 	for i, e := range w.English {
 		e = re.ReplaceAllString(e, queryHighlighted)
 		w.English[i] = e
