@@ -3,20 +3,20 @@
   {{$entry := .}}
   <tr class="word">
     <td class="title">
-      <a class="main-entry" href="/{{$entry.Japanese}}">{{$entry.Japanese}}</a>
+      <a class="main-entry" href="/{{$entry.Japanese}}">{{html $entry.Japanese}}</a>
       {{if $entry.Common}}
       <div class="label label-success label-common">common</div>
       {{end}}
       <span class="reading">
         {{if eq $entry.Furigana $entry.Japanese}}
         {{else}}
-        {{$entry.Furigana}}
+        {{html $entry.Furigana}}
         {{end}}
       </span>
     </td>
     <td class="definition">
       {{range $i, $gloss := $entry.English}}
-        <div class="gloss">{{add $i 1}}. {{$gloss}}</div>
+        <div class="gloss">{{add $i 1}}. {{html $gloss}}</div>
       {{end}}
     </td>
   </div>
