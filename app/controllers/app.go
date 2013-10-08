@@ -37,16 +37,17 @@ type Highlight struct {
 }
 
 type Word struct {
-	Romaji   string
-	Common   bool
-	Dialects []string
-	Fields   []string
-	Glosses  []Gloss
-	English  []string
-	Furigana string
-	Japanese string
-	Tags     []string
-	Pos      []string
+	Romaji    string
+	Common    bool
+	Dialects  []string
+	Fields    []string
+	Glosses   []Gloss
+	English   []string
+	Furigana  string
+	Japanese  string
+	MainEntry string
+	Tags      []string
+	Pos       []string
 }
 
 // Wrap the query in <strong> tags so that we can highlight it in the results
@@ -57,7 +58,7 @@ func (w *Word) highlightQuery(query string) {
 	kana := kana.NewKana()
 	h := kana.Romaji_to_hiragana(query)
 	k := kana.Romaji_to_katakana(query)
-    // make regular expressions that match the hiragana and katakana
+	// make regular expressions that match the hiragana and katakana
 	hiraganaRe := regexp.MustCompile(h)
 	katakanaRe := regexp.MustCompile(k)
 	// wrap the query in strong tags
@@ -100,6 +101,7 @@ func search(query string) []Word {
 		if err != nil {
 			log.Println(err)
 		}
+		w.MainEntry = w.Japanese
 		w.highlightQuery(query)
 		wordList = append(wordList, w)
 	}
