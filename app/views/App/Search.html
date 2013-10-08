@@ -3,7 +3,7 @@
   {{$entry := .}}
   <tr class="word">
     <td class="title">
-      <a class="main-entry" href="/{{$entry.Japanese}}">{{html $entry.Japanese}}</a>
+      <a class="main-entry" href="/{{$entry.MainEntry}}">{{html $entry.Japanese}}</a>
       {{if $entry.Common}}
       <div class="label label-success label-common">common</div>
       {{end}}
