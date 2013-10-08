@@ -1,12 +1,16 @@
     <div id="footer">
-        {{if .termList}}
-        Example searches:
-        {{end}}
-        {{range .termList}}
-            {{$entry := .}}
-            <a href="/{{$entry.Term}}" title="{{$entry.Term}} in Japanese">{{$entry.Term}}</a>
-        {{end}}
-        <p>We're building the world's best Japanese dictionary. <a href="/info/about">Learn more</a></p>
+        <div class="searches">
+            {{if .termList}}
+            Example searches:
+            {{end}}
+            {{range .termList}}
+                {{$entry := .}}
+                <a href="/{{$entry.Term}}" title="{{$entry.Term}} in Japanese">{{$entry.Term}}</a>
+            {{end}}
+        </div>
+        <div class="info">
+            <p>We're building the world's best Japanese dictionary. <a href="/info/about">Learn more</a></p>
+        </div>
     </div>
   </body>
 </html>
