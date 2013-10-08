@@ -18,7 +18,7 @@ html, body {height: 100%;}
     margin-top: -120px; /* negative value of footer height */
     height: 120px;
     clear:both;
-  } 
+  }
 
   /*Opera Fix*/
   body:before {
@@ -45,7 +45,7 @@ body {
 }
 
 a, a:hover {
-  color: #9d1b1b;
+  color: #1E88A8;
 }
 
 #search {
@@ -58,7 +58,7 @@ a, a:hover {
 }
 
 .results-table {
-  table-layout:fixed; 
+  table-layout:fixed;
   width:100%;
 }
 .results-table td {
@@ -70,7 +70,7 @@ a, a:hover {
   padding: 10px;
 }
 .word:hover {
-  background: #F4D8D8 !important;
+  background: #D8E9F4 !important;
   cursor: pointer;
 }
 .word:nth-child(2n) {
@@ -97,6 +97,8 @@ a, a:hover {
 }
 .word .label-common {
   font-size: 10px;
+  background: #0089A7;
+  font-weight: normal;
 }
 .word a.main-entry {
   color: inherit;
@@ -104,7 +106,8 @@ a, a:hover {
 }
 .word strong {
   padding: 2px 4px;
-  background: #FFB6B6;
+  background: #A8CCDB;
+  font-weight: normal;
 }
 
 .header .title {
@@ -114,9 +117,19 @@ a, a:hover {
   margin: 20px;
   max-width: 90%;
 }
+
 @media (min-width: 767px) {
   .header .title img {
     max-width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .label-common {
+    display: none;
+  }
+  .word .reading {
+    width: 100%;
   }
 }
 
@@ -129,7 +142,7 @@ a, a:hover {
 
 .page.about .mailing-list-label {
   margin-top: 30px;
-  font-size: 20px; 
+  font-size: 20px;
   line-height: 1.6em;
   font-weight: bold;
 }
@@ -168,9 +181,17 @@ input.shake-invalid {
 /* --- Footer styles --- */
 #footer {
   text-align: center;
+  padding: 0;
 }
-#footer p {
-  padding-top: 50px;
+#footer .info {
+  padding-top: 20px;
+}
+#footer .info p {
+  margin: 0;
+  padding: 0;
+}
+#footer .searches {
+  padding-top: 30px;
 }
 
 
