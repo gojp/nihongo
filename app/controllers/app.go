@@ -135,14 +135,18 @@ func (c App) Details(query string) revel.Result {
 	if strings.Contains(query, " ") {
 		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "-", -1)))
 	}
+    // Copy the query so that we maintain the dashes
+    // when inserting into MongoDB
+	mongoTerm := query
 	query = strings.Replace(query, "-", " ", -1)
 	wordList := search(query)
 	pageTitle := query + " in Japanese"
 
 	// log this call in mongo
 	collection := c.MongoSession.DB("greenbook").C("hits")
-	_, err := collection.Upsert(bson.M{"term": query}, bson.M{"$inc": bson.M{"count": 1}})
+	_, err := collection.Upsert(bson.M{"term": mongoTerm}, bson.M{"$inc": bson.M{"count": 1}})
 	if err != nil {
+		log.Println("DEBUG: mongo failed to upsert count: " + err.Error())
 		// mongo failed to log, but who cares
 	}
 
