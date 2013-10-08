@@ -56,8 +56,9 @@ func (w *Word) highlightQuery(query string) {
 	// hiragana or katakana, it will just be the same.
 	kana := kana.NewKana()
 	h := kana.Romaji_to_hiragana(query)
-	hiraganaRe := regexp.MustCompile(h)
 	k := kana.Romaji_to_katakana(query)
+    // make regular expressions that match the hiragana and katakana
+	hiraganaRe := regexp.MustCompile(h)
 	katakanaRe := regexp.MustCompile(k)
 	// wrap the query in strong tags
 	queryHighlighted := "<strong>" + query + "</strong>"
