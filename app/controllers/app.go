@@ -146,7 +146,7 @@ func (c App) Details(query string) revel.Result {
 	collection := c.MongoSession.DB("greenbook").C("hits")
 	_, err := collection.Upsert(bson.M{"term": mongoTerm}, bson.M{"$inc": bson.M{"count": 1}})
 	if err != nil {
-		log.Println("DEBUG: mongo failed to insert: " + err.Error())
+		log.Println("DEBUG: mongo failed to upsert count: " + err.Error())
 		// mongo failed to log, but who cares
 	}
 
