@@ -182,7 +182,6 @@ func (c App) Index() revel.Result {
 	termList := []models.SearchTerm{}
 	iter := q.Limit(10).Iter()
 	iter.All(&termList)
-	fmt.Println(termList)
 
 	return c.Render(termList)
 }
