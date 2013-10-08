@@ -50,6 +50,11 @@ type Word struct {
 	Pos       []string
 }
 
+// wrap a string in strong tags
+func makeStrong(query string) string {
+	return "<strong>" + query + "</strong>"
+}
+
 // Wrap the query in <strong> tags so that we can highlight it in the results
 func (w *Word) highlightQuery(query string) {
 	re := regexp.MustCompile(`\b` + query + `\b`)
@@ -62,9 +67,9 @@ func (w *Word) highlightQuery(query string) {
 	hiraganaRe := regexp.MustCompile(h)
 	katakanaRe := regexp.MustCompile(k)
 	// wrap the query in strong tags
-	queryHighlighted := "<strong>" + query + "</strong>"
-	katakanaHighlighted := "<strong>" + k + "</strong>"
-	hiraganaHighlighted := "<strong>" + h + "</strong>"
+	queryHighlighted := makeStrong(query)
+	katakanaHighlighted := makeStrong(k)
+	hiraganaHighlighted := makeStrong(h)
 	// if the query is originally in Japanese, highlight it
 	w.Japanese = re.ReplaceAllString(w.Japanese, queryHighlighted)
 	// highlight the katakana or hiragana that has been converted from romaji
