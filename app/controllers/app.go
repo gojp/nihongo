@@ -95,7 +95,7 @@ func (w *Word) highlightQuery(query string) {
 func search(query string) []Word {
 	fmt.Println("Searching for... ", query)
 	api.Domain = "localhost"
-	searchJson := fmt.Sprintf(`{"query": {"multi_match": {"query": "%s", "fields": ["japanese", "furigana", "romaji", "english"]}}, "highlight": {"fields": {"furigana": {}, "japanese": {}, "romaji": {}, "english": {}}}}`, query)
+	searchJson := fmt.Sprintf(`{"query": {"multi_match": {"query": "%s", "fields": ["japanese", "furigana", "romaji", "english"]}}}`, query)
 	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
 	if err != nil {
 		log.Println(err)
@@ -135,8 +135,8 @@ func (c App) Details(query string) revel.Result {
 	if strings.Contains(query, " ") {
 		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "-", -1)))
 	}
-    // Copy the query so that we maintain the dashes
-    // when inserting into MongoDB
+	// Copy the query so that we maintain the dashes
+	// when inserting into MongoDB
 	mongoTerm := query
 	query = strings.Replace(query, "-", " ", -1)
 	wordList := search(query)
