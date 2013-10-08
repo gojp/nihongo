@@ -75,13 +75,21 @@ func (w *Word) highlightQuery(query string) {
 	katakanaRe := regexp.MustCompile(k)
 	// wrap the query in strong tags
 	queryHighlighted := makeStrong(query)
-	katakanaHighlighted := makeStrong(k)
 	hiraganaHighlighted := makeStrong(h)
-	// if the query is originally in Japanese, highlight it
-	w.Japanese = re.ReplaceAllString(w.Japanese, queryHighlighted)
-	// highlight the katakana or hiragana that has been converted from romaji
-	w.Japanese = hiraganaRe.ReplaceAllString(w.Japanese, hiraganaHighlighted)
-	w.Japanese = katakanaRe.ReplaceAllString(w.Japanese, katakanaHighlighted)
+	katakanaHighlighted := makeStrong(k)
+
+	// if the original input is Japanese, then the original input converted
+	// to hiragana and katakana will be equal, so just choose one
+	// to highlight so that we only end up with one pair of strong tags
+	if hiraganaHighlighted == katakanaHighlighted {
+		w.Japanese = hiraganaRe.ReplaceAllString(w.Japanese, hiraganaHighlighted)
+	} else {
+		// The original input is romaji, so we convert it to hiragana and katakana
+		// and highlight both.
+		w.Japanese = hiraganaRe.ReplaceAllString(w.Japanese, hiraganaHighlighted)
+		w.Japanese = katakanaRe.ReplaceAllString(w.Japanese, katakanaHighlighted)
+	}
+
 	// highlight the furigana too, same as above
 	w.Furigana = hiraganaRe.ReplaceAllString(w.Furigana, hiraganaHighlighted)
 	w.Furigana = katakanaRe.ReplaceAllString(w.Furigana, katakanaHighlighted)
@@ -95,7 +103,7 @@ func (w *Word) highlightQuery(query string) {
 func search(query string) []Word {
 	fmt.Println("Searching for... ", query)
 	api.Domain = "localhost"
-	searchJson := fmt.Sprintf(`{"query": {"multi_match": {"query": "%s", "fields": ["japanese", "furigana", "romaji", "english"]}}, "highlight": {"fields": {"furigana": {}, "japanese": {}, "romaji": {}, "english": {}}}}`, query)
+	searchJson := fmt.Sprintf(`{"query": {"multi_match": {"query": "%s", "fields": ["japanese", "furigana", "romaji", "english"]}}}`, query)
 	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
 	if err != nil {
 		log.Println(err)
@@ -135,8 +143,8 @@ func (c App) Details(query string) revel.Result {
 	if strings.Contains(query, " ") {
 		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "-", -1)))
 	}
-    // Copy the query so that we maintain the dashes
-    // when inserting into MongoDB
+	// Copy the query so that we maintain the dashes
+	// when inserting into MongoDB
 	mongoTerm := query
 	query = strings.Replace(query, "-", " ", -1)
 	wordList := search(query)
