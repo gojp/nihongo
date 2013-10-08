@@ -50,21 +50,33 @@ type Word struct {
 	Pos       []string
 }
 
-// Wrap the query in <strong> tags so that we can highlight it in the results
-func (w *Word) highlightQuery(query string) {
-	re := regexp.MustCompile(`\b` + query + `\b`)
-	// convert the query to hiragana and katakana. if it's already in
-	// hiragana or katakana, it will just be the same.
+// wrap a string in strong tags
+func makeStrong(query string) string {
+	return "<strong>" + query + "</strong>"
+}
+
+// convert the query to hiragana and katakana. if it's already in
+// hiragana or katakana, it will just be the same.
+func convertQueryToKana(query string) (hiragana, katakana string) {
 	kana := kana.NewKana()
 	h := kana.Romaji_to_hiragana(query)
 	k := kana.Romaji_to_katakana(query)
+	return h, k
+}
+
+// Wrap the query in <strong> tags so that we can highlight it in the results
+func (w *Word) highlightQuery(query string) {
+	// make regular expression that matches the original query
+	re := regexp.MustCompile(`\b` + query + `\b`)
+	// convert original query to kana
+	h, k := convertQueryToKana(query)
 	// make regular expressions that match the hiragana and katakana
 	hiraganaRe := regexp.MustCompile(h)
 	katakanaRe := regexp.MustCompile(k)
 	// wrap the query in strong tags
-	queryHighlighted := "<strong>" + query + "</strong>"
-	katakanaHighlighted := "<strong>" + k + "</strong>"
-	hiraganaHighlighted := "<strong>" + h + "</strong>"
+	queryHighlighted := makeStrong(query)
+	katakanaHighlighted := makeStrong(k)
+	hiraganaHighlighted := makeStrong(h)
 	// if the query is originally in Japanese, highlight it
 	w.Japanese = re.ReplaceAllString(w.Japanese, queryHighlighted)
 	// highlight the katakana or hiragana that has been converted from romaji
