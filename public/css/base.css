@@ -105,7 +105,7 @@ a, a:hover {
   text-decoration: none;
 }
 .word strong {
-  padding: 2px 4px;
+  padding: 2px 0px;
   background: #A8CCDB;
   font-weight: normal;
 }
