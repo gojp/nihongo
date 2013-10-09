@@ -103,7 +103,76 @@ func (w *Word) highlightQuery(query string) {
 func search(query string) []Word {
 	fmt.Println("Searching for... ", query)
 	api.Domain = "localhost"
-	searchJson := fmt.Sprintf(`{"query": {"multi_match": {"query": "%s", "fields": ["japanese", "furigana", "romaji", "english"]}}}`, query)
+
+	// convert to hiragana and katakana
+	kana := kana.NewKana()
+	romaji := kana.Kana_to_romaji(query)
+	hiraganaQuery := kana.Romaji_to_hiragana(query)
+	katakanaQuery := kana.Romaji_to_katakana(query)
+
+	searchJson := fmt.Sprintf(`
+		{"query": 
+			{"bool": 
+				{
+				"should":
+					[{"match" : 
+						{
+					        "japanese" : {
+					            "query" : "%s",
+					            "type" : "phrase",
+					            "boost": 10.0
+					        }
+					    }
+				    },
+					{"match" : 
+						{
+					        "romaji" : {
+					            "query" : "%s",
+					            "type" : "phrase",
+					            "boost": 2.0
+					        }
+					    }
+				    },
+					{"match" : 
+						{
+					        "furigana" : {
+					            "query" : "%s",
+					            "type" : "phrase",
+					            "boost": 3.0
+					        }
+					    }
+				    },
+					{"match" : 
+						{
+					        "furigana" : {
+					            "query" : "%s",
+					            "type" : "phrase",
+					            "boost": 3.0
+					        }
+					    }
+				    },
+				    {"match" : 
+						{
+					        "english" : {
+					            "query" : "%s",
+					            "boost": 3.0
+					        }
+					    }
+				    },
+				    {"match" : 
+						{
+					        "english" : {
+					            "query" : "%s",
+					            "type": "phrase",
+					            "boost": 10.0
+					        }
+					    }
+				    }],
+				"minimum_should_match" : 1,
+				"boost": 2.0
+				}
+			}
+		}`, query, romaji, query, hiraganaQuery, katakanaQuery, query, query)
 	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
 	if err != nil {
 		log.Println(err)
