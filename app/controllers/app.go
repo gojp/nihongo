@@ -59,8 +59,8 @@ func makeStrong(query string) string {
 // hiragana or katakana, it will just be the same.
 func convertQueryToKana(query string) (hiragana, katakana string) {
 	kana := kana.NewKana()
-	h := kana.Romaji_to_hiragana(query)
-	k := kana.Romaji_to_katakana(query)
+	h := kana.RomajiToHiragana(query)
+	k := kana.RomajiToKatakana(query)
 	return h, k
 }
 
@@ -104,75 +104,92 @@ func search(query string) []Word {
 	fmt.Println("Searching for... ", query)
 	api.Domain = "localhost"
 
-	// convert to hiragana and katakana
 	kana := kana.NewKana()
-	romaji := kana.Kana_to_romaji(query)
-	hiraganaQuery := kana.Romaji_to_hiragana(query)
-	katakanaQuery := kana.Romaji_to_katakana(query)
+
+	isLatin := kana.IsLatin(query)
+	isKana := kana.IsKana(query)
+	isKanji := kana.IsKanji(query)
+	fmt.Println(isLatin, isKana, isKanji)
+
+	// convert to hiragana and katakana
+	romaji := kana.KanaToRomaji(query)
+
+	// handle different types of input differently:
+	matches := []string{}
+	if isKana {
+		// add boost for exact-matching kana
+		matches = append(matches, fmt.Sprintf(`
+		{"match" : 
+			{
+				"furigana" : {
+					"query" : "%s",
+					"type" : "phrase",
+					"boost": 5.0
+				}
+			}
+		}`, query))
+
+		// also look for romaji version in case
+		matches = append(matches, fmt.Sprintf(`
+		{"match" : 
+			{
+				"romaji" : {
+					"query" : "%s",
+					"type" : "phrase",
+					"boost": 2.0
+				}
+			}
+		}`, romaji))
+	}
+	if !isLatin {
+		matches = append(matches, fmt.Sprintf(`
+		{"match" : 
+			{
+				"japanese" : {
+					"query" : "%s",
+					"type" : "phrase",
+					"boost": 10.0
+				}
+			}
+		}`, query))
+	} else {
+		// add romaji search term
+		matches = append(matches, fmt.Sprintf(`
+		{"match" : 
+			{
+				"romaji" : {
+					"query" : "%s",
+					"type" : "phrase",
+					"boost": 3.0
+				}
+			}
+		}`, query))
+
+		// add english search term
+		matches = append(matches, fmt.Sprintf(`
+		{"match" : 
+			{
+				"english" : {
+					"query" : "%s",
+					"type" : "phrase",
+					"boost": 5.0
+				}
+			}
+		}`, query))
+	}
 
 	searchJson := fmt.Sprintf(`
 		{"query": 
 			{"bool": 
 				{
 				"should":
-					[{"match" : 
-						{
-					        "japanese" : {
-					            "query" : "%s",
-					            "type" : "phrase",
-					            "boost": 10.0
-					        }
-					    }
-				    },
-					{"match" : 
-						{
-					        "romaji" : {
-					            "query" : "%s",
-					            "type" : "phrase",
-					            "boost": 2.0
-					        }
-					    }
-				    },
-					{"match" : 
-						{
-					        "furigana" : {
-					            "query" : "%s",
-					            "type" : "phrase",
-					            "boost": 3.0
-					        }
-					    }
-				    },
-					{"match" : 
-						{
-					        "furigana" : {
-					            "query" : "%s",
-					            "type" : "phrase",
-					            "boost": 3.0
-					        }
-					    }
-				    },
-				    {"match" : 
-						{
-					        "english" : {
-					            "query" : "%s",
-					            "boost": 3.0
-					        }
-					    }
-				    },
-				    {"match" : 
-						{
-					        "english" : {
-					            "query" : "%s",
-					            "type": "phrase",
-					            "boost": 10.0
-					        }
-					    }
-				    }],
-				"minimum_should_match" : 1,
+					[` + strings.Join(matches, ",") + `],
+				"minimum_should_match" : 0,
 				"boost": 2.0
 				}
 			}
-		}`, query, romaji, query, hiraganaQuery, katakanaQuery, query, query)
+		}`)
+
 	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
 	if err != nil {
 		log.Println(err)
