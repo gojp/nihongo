@@ -9,6 +9,7 @@ before_install:
 - gofmt .
 install:
 - go get launchpad.net/gocheck
+- go get github.com/robfig/revel
 - go get github.com/robfig/revel/revel
 script:
 - revel test github.com/gojp/nihongo
