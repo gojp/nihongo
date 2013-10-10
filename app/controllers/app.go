@@ -106,7 +106,6 @@ func search(query string) []Word {
 	isLatin := kana.IsLatin(query)
 	isKana := kana.IsKana(query)
 	isKanji := kana.IsKanji(query)
-	fmt.Println(isLatin, isKana, isKanji)
 
 	// convert to hiragana and katakana
 	romaji := kana.KanaToRomaji(query)
