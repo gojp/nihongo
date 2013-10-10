@@ -4,11 +4,14 @@ go:
   - 1.0
   - 1.1
 
+services:
+  - elasticsearch
+
 before_install:
-    - gofmt .
+  - gofmt .
 
 install:
-    - go get launchpad.net/gocheck
+  - go get launchpad.net/gocheck
 
 notifications:
   irc: "chat.freenode.net#gojp"
