@@ -25,7 +25,7 @@ func Search(query string) (hits [][]byte) {
 	if isKana {
 		// add boost for exact-matching kana
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"furigana" : {
 					"query" : "%s",
@@ -37,7 +37,7 @@ func Search(query string) (hits [][]byte) {
 
 		// also look for romaji version in case
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"romaji" : {
 					"query" : "%s",
@@ -49,7 +49,7 @@ func Search(query string) (hits [][]byte) {
 	}
 	if !isLatin {
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"japanese" : {
 					"query" : "%s",
@@ -61,7 +61,7 @@ func Search(query string) (hits [][]byte) {
 	} else {
 		// add romaji search term
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"romaji" : {
 					"query" : "%s",
@@ -73,7 +73,7 @@ func Search(query string) (hits [][]byte) {
 
 		// add english search term
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"english" : {
 					"query" : "%s",
@@ -85,8 +85,8 @@ func Search(query string) (hits [][]byte) {
 	}
 
 	searchJson := fmt.Sprintf(`
-		{"query": 
-			{"bool": 
+		{"query":
+			{"bool":
 				{
 				"should":
 					[` + strings.Join(matches, ",") + `],
@@ -104,6 +104,5 @@ func Search(query string) (hits [][]byte) {
 	for _, hit := range out.Hits.Hits {
 		hits = append(hits, hit.Source)
 	}
-
 	return hits
 }
