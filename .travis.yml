@@ -1,0 +1,14 @@
+language: go
+
+go:
+  - 1.0
+  - 1.1
+
+before_install:
+    - gofmt .
+
+install:
+    - go get launchpad.net/gocheck
+
+notifications:
+  irc: "chat.freenode.net#gojp"
