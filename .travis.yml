@@ -8,9 +8,18 @@ services:
 before_install:
 - gofmt .
 install:
+- export PATH=$PATH:$HOME/gopath/bin
+- go get -v github.com/robfig/revel/revel
+- go get -v github.com/robfig/revel/cache
+- go get -v github.com/robfig/revel/harness
+- go get -v github.com/coopernurse/gorp
+- go get -v code.google.com/p/go.crypto/bcrypt
+- go get -v github.com/mattn/go-sqlite3
+- go get -v github.com/robfig/cron
+- go get -v github.com/robfig/goauth2/oauth
+- go get -v github.com/mrjones/oauth
 - go get launchpad.net/gocheck
-- go get github.com/robfig/revel
-- go get github.com/robfig/revel/revel
+- go get -v ./...
 script:
 - revel test github.com/gojp/nihongo
 notifications:
