@@ -116,7 +116,7 @@ func search(query string) []Word {
 	if isKana {
 		// add boost for exact-matching kana
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"furigana" : {
 					"query" : "%s",
@@ -128,7 +128,7 @@ func search(query string) []Word {
 
 		// also look for romaji version in case
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"romaji" : {
 					"query" : "%s",
@@ -140,7 +140,7 @@ func search(query string) []Word {
 	}
 	if !isLatin {
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"japanese" : {
 					"query" : "%s",
@@ -152,7 +152,7 @@ func search(query string) []Word {
 	} else {
 		// add romaji search term
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"romaji" : {
 					"query" : "%s",
@@ -164,7 +164,7 @@ func search(query string) []Word {
 
 		// add english search term
 		matches = append(matches, fmt.Sprintf(`
-		{"match" : 
+		{"match" :
 			{
 				"english" : {
 					"query" : "%s",
@@ -176,8 +176,8 @@ func search(query string) []Word {
 	}
 
 	searchJson := fmt.Sprintf(`
-		{"query": 
-			{"bool": 
+		{"query":
+			{"bool":
 				{
 				"should":
 					[` + strings.Join(matches, ",") + `],
