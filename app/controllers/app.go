@@ -2,13 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gojp/kana"
+	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
 	"github.com/jgraham909/revmgo"
-	"github.com/mattbaird/elastigo/api"
-	"github.com/mattbaird/elastigo/core"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
@@ -22,32 +20,8 @@ type App struct {
 	revmgo.MongoController
 }
 
-type Gloss struct {
-	English string
-	Tags    []string
-	Related []string
-	Common  bool
-}
-
-type Highlight struct {
-	Furigana string
-	Japanese string
-	Romaji   string
-	English  []string
-}
-
 type Word struct {
-	Romaji    string
-	Common    bool
-	Dialects  []string
-	Fields    []string
-	Glosses   []Gloss
-	English   []string
-	Furigana  string
-	Japanese  string
-	MainEntry string
-	Tags      []string
-	Pos       []string
+	*models.Word
 }
 
 // wrap a string in strong tags
@@ -65,9 +39,9 @@ func convertQueryToKana(query string) (hiragana, katakana string) {
 }
 
 // Wrap the query in <strong> tags so that we can highlight it in the results
-func (w *Word) highlightQuery(query string) {
+func highlightQuery(w Word, query string) {
 	// make regular expression that matches the original query
-	re := regexp.MustCompile(`\b` + query + `\b`)
+	re := regexp.MustCompile(`\b` + regexp.QuoteMeta(query) + `\b`)
 	// convert original query to kana
 	h, k := convertQueryToKana(query)
 	// wrap the query in strong tags
@@ -97,105 +71,8 @@ func (w *Word) highlightQuery(query string) {
 	}
 }
 
-func search(query string) []Word {
-	fmt.Println("Searching for... ", query)
-	api.Domain = "localhost"
-
-	kana := kana.NewKana()
-
-	isLatin := kana.IsLatin(query)
-	isKana := kana.IsKana(query)
-
-	// convert to hiragana and katakana
-	romaji := kana.KanaToRomaji(query)
-
-	// handle different types of input differently:
-	matches := []string{}
-	if isKana {
-		// add boost for exact-matching kana
-		matches = append(matches, fmt.Sprintf(`
-		{"match" :
-			{
-				"furigana" : {
-					"query" : "%s",
-					"type" : "phrase",
-					"boost": 5.0
-				}
-			}
-		}`, query))
-
-		// also look for romaji version in case
-		matches = append(matches, fmt.Sprintf(`
-		{"match" :
-			{
-				"romaji" : {
-					"query" : "%s",
-					"type" : "phrase",
-					"boost": 2.0
-				}
-			}
-		}`, romaji))
-	}
-	if !isLatin {
-		matches = append(matches, fmt.Sprintf(`
-		{"match" :
-			{
-				"japanese" : {
-					"query" : "%s",
-					"type" : "phrase",
-					"boost": 10.0
-				}
-			}
-		}`, query))
-	} else {
-		// add romaji search term
-		matches = append(matches, fmt.Sprintf(`
-		{"match" :
-			{
-				"romaji" : {
-					"query" : "%s",
-					"type" : "phrase",
-					"boost": 3.0
-				}
-			}
-		}`, query))
-
-		// add english search term
-		matches = append(matches, fmt.Sprintf(`
-		{"match" :
-			{
-				"english" : {
-					"query" : "%s",
-					"type" : "phrase",
-					"boost": 5.0
-				}
-			}
-		}`, query))
-	}
-
-	searchJson := fmt.Sprintf(`
-		{"query":
-			{"bool":
-				{
-				"should":
-					[` + strings.Join(matches, ",") + `],
-				"minimum_should_match" : 0,
-				"boost": 2.0
-				}
-			}
-		}`)
-
-	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
-	if err != nil {
-		log.Println(err)
-	}
-
-	hits := [][]byte{}
-	for _, hit := range out.Hits.Hits {
-		hits = append(hits, hit.Source)
-	}
-
-	wordList := []Word{}
+func getWordList(hits [][]byte, query string) (wordList []Word) {
+	// highlight queries and build Word object
 	for _, hit := range hits {
 		w := Word{}
 		err := json.Unmarshal(hit, &w)
@@ -203,7 +80,7 @@ func search(query string) []Word {
 			log.Println(err)
 		}
 		w.MainEntry = w.Japanese
-		w.highlightQuery(query)
+		highlightQuery(w, query)
 		wordList = append(wordList, w)
 	}
 	return wordList
@@ -213,7 +90,8 @@ func (a App) Search(query string) revel.Result {
 	if len(query) == 0 {
 		return a.Redirect(routes.App.Index())
 	}
-	wordList := search(query)
+	hits := helpers.Search(query)
+	wordList := getWordList(hits, query)
 	return a.Render(wordList)
 }
 
@@ -228,7 +106,8 @@ func (c App) Details(query string) revel.Result {
 	// when inserting into MongoDB
 	mongoTerm := query
 	query = strings.Replace(query, "-", " ", -1)
-	wordList := search(query)
+	hits := helpers.Search(query)
+	wordList := getWordList(hits, query)
 	pageTitle := query + " in Japanese"
 
 	// log this call in mongo

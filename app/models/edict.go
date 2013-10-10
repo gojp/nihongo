@@ -4,7 +4,7 @@ import (
 	"labix.org/v2/mgo/bson"
 )
 
-type Word struct {
+type WordModel struct {
 	ID       bson.ObjectId `bson:"_id,omitempty"`
 	Info     string
 	Glosses  []string

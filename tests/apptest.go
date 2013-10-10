@@ -16,6 +16,24 @@ func (t AppTest) TestThatIndexPageWorks() {
 	t.AssertContentType("text/html")
 }
 
+func (t AppTest) TestThatHelloSearchPageWorks() {
+	t.Get("/hello")
+	t.AssertOk()
+	t.AssertContentType("text/html")
+}
+
+func (t AppTest) TestThatKonnichiwaSearchPageWorks() {
+	t.Get("/今日は")
+	t.AssertOk()
+	t.AssertContentType("text/html")
+}
+
+func (t AppTest) TestThatDoublePlusSearchWorks() {
+	t.Get("/今日は++")
+	t.AssertOk()
+	t.AssertContentType("text/html")
+}
+
 func (t AppTest) After() {
 	println("Tear down")
 }
