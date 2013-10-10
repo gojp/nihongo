@@ -1,17 +1,23 @@
+---
 language: go
-
 go:
-  - 1.0
-  - 1.1
-
+- 1.0
+- 1.1
 services:
-  - elasticsearch
-
+- elasticsearch
 before_install:
-  - gofmt .
-
+- gofmt .
 install:
-  - go get launchpad.net/gocheck
-
+- go get launchpad.net/gocheck
+- go get github.com/robfig/revel/revel
+script:
+- revel test github.com/gojp/nihongo
 notifications:
-  irc: "chat.freenode.net#gojp"
+  irc: chat.freenode.net#gojp
+env:
+  global:
+    secure: ! 'hQDoHFX2g+YCiNNL2EilFSB4wwdgt/HaJMfgbMWhxSeu7oDU3nldZNFOke3I
+
+      M88BCz2T2kwfIEQlS6vlrvcOWXCi8piPpiWHD0j2Xgv+4dKBAlfVQGoOcjij
+
+      mq2lF8Hf3B/jPy8jot5au57QZhUOQln1Eb4SW9d5O87ikzFA97k='
