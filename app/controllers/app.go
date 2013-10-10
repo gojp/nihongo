@@ -70,9 +70,6 @@ func (w *Word) highlightQuery(query string) {
 	re := regexp.MustCompile(`\b` + query + `\b`)
 	// convert original query to kana
 	h, k := convertQueryToKana(query)
-	// make regular expressions that match the hiragana and katakana
-	hiraganaRe := regexp.MustCompile(h)
-	katakanaRe := regexp.MustCompile(k)
 	// wrap the query in strong tags
 	queryHighlighted := makeStrong(query)
 	hiraganaHighlighted := makeStrong(h)
@@ -82,17 +79,17 @@ func (w *Word) highlightQuery(query string) {
 	// to hiragana and katakana will be equal, so just choose one
 	// to highlight so that we only end up with one pair of strong tags
 	if hiraganaHighlighted == katakanaHighlighted {
-		w.Japanese = hiraganaRe.ReplaceAllString(w.Japanese, hiraganaHighlighted)
+		w.Japanese = strings.Replace(w.Japanese, h, hiraganaHighlighted, -1)
 	} else {
 		// The original input is romaji, so we convert it to hiragana and katakana
 		// and highlight both.
-		w.Japanese = hiraganaRe.ReplaceAllString(w.Japanese, hiraganaHighlighted)
-		w.Japanese = katakanaRe.ReplaceAllString(w.Japanese, katakanaHighlighted)
+		w.Japanese = strings.Replace(w.Japanese, h, hiraganaHighlighted, -1)
+		w.Japanese = strings.Replace(w.Japanese, k, katakanaHighlighted, -1)
 	}
 
 	// highlight the furigana too, same as above
-	w.Furigana = hiraganaRe.ReplaceAllString(w.Furigana, hiraganaHighlighted)
-	w.Furigana = katakanaRe.ReplaceAllString(w.Furigana, katakanaHighlighted)
+	w.Furigana = strings.Replace(w.Furigana, h, hiraganaHighlighted, -1)
+	w.Furigana = strings.Replace(w.Furigana, k, katakanaHighlighted, -1)
 	// highlight the query inside the list of English definitions
 	for i, e := range w.English {
 		e = re.ReplaceAllString(e, queryHighlighted)
