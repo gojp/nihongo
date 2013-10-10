@@ -10,6 +10,7 @@ install:
 - export PATH=$PATH:$HOME/gopath/bin
 - go get -v github.com/robfig/revel/revel
 - go get launchpad.net/gocheck
+- go get github.com/gojp/kana
 script:
 - revel test github.com/gojp/nihongo
 notifications:
