@@ -12,8 +12,6 @@ import (
 func Search(query string) (hits [][]byte) {
 	api.Domain = "localhost"
 
-	kana := kana.NewKana()
-
 	isLatin := kana.IsLatin(query)
 	isKana := kana.IsKana(query)
 

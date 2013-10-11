@@ -32,7 +32,6 @@ func makeStrong(query string) string {
 // convert the query to hiragana and katakana. if it's already in
 // hiragana or katakana, it will just be the same.
 func convertQueryToKana(query string) (hiragana, katakana string) {
-	kana := kana.NewKana()
 	h := kana.RomajiToHiragana(query)
 	k := kana.RomajiToKatakana(query)
 	return h, k
@@ -100,12 +99,12 @@ func (c App) Details(query string) revel.Result {
 		return c.Redirect(routes.App.Index())
 	}
 	if strings.Contains(query, " ") {
-		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "-", -1)))
+		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "_", -1)))
 	}
 	// Copy the query so that we maintain the dashes
 	// when inserting into MongoDB
 	mongoTerm := query
-	query = strings.Replace(query, "-", " ", -1)
+	query = strings.Replace(query, "_", " ", -1)
 	hits := helpers.Search(query)
 	wordList := getWordList(hits, query)
 	pageTitle := query + " in Japanese"
