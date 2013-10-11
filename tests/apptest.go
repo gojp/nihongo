@@ -66,6 +66,11 @@ func (t AppTest) TestSearchResults() {
 	t.Assert(wordList[0].Japanese == "心")
 }
 
+func (t AppTest) TestSearchResultScores() {
+	wordList := getWordList(helpers.Search("myu-jikku"))
+	t.Assert(wordList[0].English[0] == "music")
+}
+
 func (t AppTest) After() {
 	println("Tear down")
 }
