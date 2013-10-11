@@ -100,12 +100,12 @@ func (c App) Details(query string) revel.Result {
 		return c.Redirect(routes.App.Index())
 	}
 	if strings.Contains(query, " ") {
-		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "-", -1)))
+		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "_", -1)))
 	}
 	// Copy the query so that we maintain the dashes
 	// when inserting into MongoDB
 	mongoTerm := query
-	query = strings.Replace(query, "-", " ", -1)
+	query = strings.Replace(query, "_", " ", -1)
 	hits := helpers.Search(query)
 	wordList := getWordList(hits, query)
 	pageTitle := query + " in Japanese"
