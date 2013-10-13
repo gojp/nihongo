@@ -16,7 +16,6 @@ func getWordList(hits [][]byte) (wordList []Word) {
 	for _, hit := range hits {
 		w := Word{}
 		json.Unmarshal(hit, &w)
-		w.MainEntry = w.Japanese
 		wordList = append(wordList, w)
 	}
 	return wordList
