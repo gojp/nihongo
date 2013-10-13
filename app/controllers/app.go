@@ -6,10 +6,7 @@ import (
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
-	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
 	"log"
 	"regexp"
 	"strings"
@@ -17,7 +14,6 @@ import (
 
 type App struct {
 	*revel.Controller
-	revmgo.MongoController
 }
 
 type Word struct {
@@ -99,36 +95,18 @@ func (a App) Search(query string) revel.Result {
 }
 
 func (c App) Details(query string) revel.Result {
+	println(query)
 	if len(query) == 0 {
 		return c.Redirect(routes.App.Index())
 	}
 	if strings.Contains(query, " ") {
 		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "_", -1)))
 	}
-	// Copy the query so that we maintain the dashes
-	// when inserting into MongoDB
-	mongoTerm := query
+
 	query = strings.Replace(query, "_", " ", -1)
 	hits := helpers.Search(query)
 	wordList := getWordList(hits, query)
 	pageTitle := query + " in Japanese"
-
-	// log this call in mongo
-	collection := c.MongoSession.DB("greenbook").C("hits")
-	_, err := collection.Upsert(bson.M{"term": mongoTerm}, bson.M{"$inc": bson.M{"count": 1}})
-	if err != nil {
-		log.Println("DEBUG: mongo failed to upsert count: " + err.Error())
-		// mongo failed to log, but who cares
-	}
-
-	index := mgo.Index{
-		Key:        []string{"count"},
-		Unique:     false,
-		DropDups:   false,
-		Background: true,
-		Sparse:     true,
-	}
-	collection.EnsureIndex(index)
 
 	return c.Render(wordList, query, pageTitle)
 }
