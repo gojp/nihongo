@@ -95,7 +95,6 @@ func (a App) Search(query string) revel.Result {
 }
 
 func (c App) Details(query string) revel.Result {
-	println(query)
 	if len(query) == 0 {
 		return c.Redirect(routes.App.Index())
 	}
