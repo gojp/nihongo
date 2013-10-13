@@ -2,6 +2,7 @@ package tests
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/robfig/revel"
@@ -9,6 +10,12 @@ import (
 
 type Word struct {
 	*models.Word
+}
+
+type ScoreWord struct {
+	SearchTerm       string
+	English          string
+	ExpectedPosition int
 }
 
 func getWordList(hits [][]byte) (wordList []Word) {
@@ -26,7 +33,6 @@ type AppTest struct {
 }
 
 func (t AppTest) Before() {
-	println("Set up")
 }
 
 func (t AppTest) TestThatIndexPageWorks() {
@@ -65,11 +71,38 @@ func (t AppTest) TestSearchResults() {
 	t.Assert(wordList[0].Japanese == "心")
 }
 
+func scoreEnglishPosition(wordList []Word, answer string, expectedPosition int) (score int) {
+	score = 0
+abc:
+	for i, word := range wordList {
+		for _, gloss := range word.English {
+			if gloss == answer {
+				score += 10 - i
+				break abc
+			}
+		}
+	}
+	return score
+}
+
 func (t AppTest) TestSearchResultScores() {
-	wordList := getWordList(helpers.Search("myu-jikku"))
-	t.Assert(wordList[0].English[0] == "music")
+	score := 0
+
+	englishWords := []ScoreWord{
+		ScoreWord{"myu-jikku", "music", 0},
+		ScoreWord{"test", "test", 0},
+	}
+
+	for _, word := range englishWords {
+		wordList := getWordList(helpers.Search(word.SearchTerm))
+		score += scoreEnglishPosition(wordList, word.English, word.ExpectedPosition)
+	}
+	finalScore := float64(score*100) / float64(10*len(englishWords))
+	fmt.Println("\n\n===================\n Final score is", finalScore, "\n===================\n")
+
+	minimumAllowedScore := 60.0
+	t.Assert(finalScore >= minimumAllowedScore)
 }
 
 func (t AppTest) After() {
-	println("Tear down")
 }
