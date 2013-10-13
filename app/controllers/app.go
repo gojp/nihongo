@@ -24,6 +24,10 @@ type Word struct {
 	*models.Word
 }
 
+type PopularSearch struct {
+	Term string
+}
+
 // wrap a string in strong tags
 func makeStrong(query string) string {
 	return "<strong>" + query + "</strong>"
@@ -52,21 +56,22 @@ func highlightQuery(w Word, query string) {
 	// to hiragana and katakana will be equal, so just choose one
 	// to highlight so that we only end up with one pair of strong tags
 	if hiraganaHighlighted == katakanaHighlighted {
-		w.Japanese = strings.Replace(w.Japanese, h, hiraganaHighlighted, -1)
+		w.JapaneseHL = strings.Replace(w.Japanese, h, hiraganaHighlighted, -1)
 	} else {
 		// The original input is romaji, so we convert it to hiragana and katakana
 		// and highlight both.
-		w.Japanese = strings.Replace(w.Japanese, h, hiraganaHighlighted, -1)
-		w.Japanese = strings.Replace(w.Japanese, k, katakanaHighlighted, -1)
+		w.JapaneseHL = strings.Replace(w.Japanese, h, hiraganaHighlighted, -1)
+		w.JapaneseHL = strings.Replace(w.JapaneseHL, k, katakanaHighlighted, -1)
 	}
 
 	// highlight the furigana too, same as above
-	w.Furigana = strings.Replace(w.Furigana, h, hiraganaHighlighted, -1)
-	w.Furigana = strings.Replace(w.Furigana, k, katakanaHighlighted, -1)
+	w.FuriganaHL = strings.Replace(w.Furigana, h, hiraganaHighlighted, -1)
+	w.FuriganaHL = strings.Replace(w.FuriganaHL, k, katakanaHighlighted, -1)
 	// highlight the query inside the list of English definitions
-	for i, e := range w.English {
+	w.EnglishHL = []string{}
+	for _, e := range w.English {
 		e = re.ReplaceAllString(e, queryHighlighted)
-		w.English[i] = e
+		w.EnglishHL = append(w.EnglishHL, e)
 	}
 }
 
@@ -78,7 +83,6 @@ func getWordList(hits [][]byte, query string) (wordList []Word) {
 		if err != nil {
 			log.Println(err)
 		}
-		w.MainEntry = w.Japanese
 		highlightQuery(w, query)
 		wordList = append(wordList, w)
 	}
@@ -143,12 +147,23 @@ func (c App) About() revel.Result {
 func (c App) Index() revel.Result {
 
 	// get the popular searches
-	collection := c.MongoSession.DB("greenbook").C("hits")
-	q := collection.Find(nil).Sort("-count")
+	// collection := c.MongoSession.DB("greenbook").C("hits")
+	// q := collection.Find(nil).Sort("-count")
 
-	termList := []models.SearchTerm{}
-	iter := q.Limit(10).Iter()
-	iter.All(&termList)
+	// termList := []models.SearchTerm{}
+	// iter := q.Limit(10).Iter()
+	// iter.All(&termList)
+
+	termList := []PopularSearch{
+		PopularSearch{"今日は"},
+		PopularSearch{"kanji"},
+		PopularSearch{"amazing"},
+		PopularSearch{"かんじ"},
+		PopularSearch{"莞爾"},
+		PopularSearch{"天真流露"},
+		PopularSearch{"funny"},
+		PopularSearch{"にほんご"},
+	}
 
 	return c.Render(termList)
 }
