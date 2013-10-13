@@ -24,6 +24,10 @@ type Word struct {
 	*models.Word
 }
 
+type PopularSearch struct {
+	Term string
+}
+
 // wrap a string in strong tags
 func makeStrong(query string) string {
 	return "<strong>" + query + "</strong>"
@@ -143,12 +147,23 @@ func (c App) About() revel.Result {
 func (c App) Index() revel.Result {
 
 	// get the popular searches
-	collection := c.MongoSession.DB("greenbook").C("hits")
-	q := collection.Find(nil).Sort("-count")
+	// collection := c.MongoSession.DB("greenbook").C("hits")
+	// q := collection.Find(nil).Sort("-count")
 
-	termList := []models.SearchTerm{}
-	iter := q.Limit(10).Iter()
-	iter.All(&termList)
+	// termList := []models.SearchTerm{}
+	// iter := q.Limit(10).Iter()
+	// iter.All(&termList)
+
+	termList := []PopularSearch{
+		PopularSearch{"今日は"},
+		PopularSearch{"kanji"},
+		PopularSearch{"amazing"},
+		PopularSearch{"かんじ"},
+		PopularSearch{"莞爾"},
+		PopularSearch{"天真流露"},
+		PopularSearch{"funny"},
+		PopularSearch{"にほんご"},
+	}
 
 	return c.Render(termList)
 }

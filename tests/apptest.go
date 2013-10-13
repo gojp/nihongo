@@ -12,6 +12,10 @@ type Word struct {
 	*models.Word
 }
 
+type PopularSearch struct {
+	Term string
+}
+
 type ScoreWord struct {
 	SearchTerm       string
 	English          string
