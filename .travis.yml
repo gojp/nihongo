@@ -11,7 +11,6 @@ install:
 - go get -v github.com/robfig/revel/revel
 - go get launchpad.net/gocheck
 - go get github.com/gojp/kana
-- go get github.com/jgraham909/revmgo
 - go get github.com/mattbaird/elastigo
 - go get github.com/araddon/gou
 script:
