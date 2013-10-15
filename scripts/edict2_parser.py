@@ -158,7 +158,6 @@ class Parser(object):
         for e in english:
             clean, number = self.extract_tags(e, re_number_tag)
             clean = clean.strip()
-            print clean, number
             if number:
                 has_numbers = True
                 joined_english.append(clean)
