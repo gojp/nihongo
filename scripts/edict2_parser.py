@@ -27,7 +27,7 @@ valid_pos_codes = list(set((
 # Field of application codes
 valid_foa_codes = list(set((
     "Buddh", "MA", "comp", "food", "geom", "ling", "math", "mil",
-    "physics", "chem"
+    "physics", "chem", "biol"
     )))
 
 # Miscellaneous marking codes
@@ -45,9 +45,9 @@ valid_dialect_codes = list(set((
     )))
 
 re_kana = re.compile(r'\[(.*)\]')
-re_tags = re.compile(r'\((%s):?\)' % '|'.join(valid_pos_codes + valid_misc_codes + valid_dialect_codes))
+re_tags = re.compile(r'\(((?:%s|[,]+)+)\:?\)' % '|'.join(valid_pos_codes + valid_misc_codes + valid_dialect_codes))
 re_field_tags = re.compile(r'\{(%s)\}' % '|'.join(valid_foa_codes))
-re_number_tag = re.compile(r'\((\d*)\)')
+re_number_tag = re.compile(r'\((\d+)\)')
 re_any_tag = re.compile(r'\(([^)]*)\)')
 re_related_tag = re.compile(r'\(See ([^)]*)\)', re.IGNORECASE)
 
@@ -108,8 +108,8 @@ class EdictEntry(object):
 
 class Parser(object):
 
-    def __init__(self, filename, encoding="EUC-JP"):
-        if not os.path.exists(filename):
+    def __init__(self, filename=None, encoding="EUC-JP"):
+        if not filename is None and not os.path.exists(filename):
             raise Exception("Dictionary file does not exist.")
         self.filename = filename
         self.encoding = encoding
@@ -119,7 +119,11 @@ class Parser(object):
         t = expression.search(word)
         tags = []
         if t:
-            tags = t.groups()
+            groups = t.groups()
+            tags = []
+            for group in groups:
+                tags += group.split(',')
+            tags = tuple(tags)
             word = expression.sub('', word)
         return word, tags
 
@@ -145,11 +149,28 @@ class Parser(object):
 
         raw_english = raw_entry.split('/')[1:-2]
 
-        english, tags = self.extract_tags(raw_english[0])
+        english, main_tags = self.extract_tags(raw_english[0])
         english = [english] + raw_english[1:]
 
+        # join numbered entries:
+        joined_english = []
+        has_numbers = False
+        for e in english:
+            clean, number = self.extract_tags(e, re_number_tag)
+            clean = clean.strip()
+            print clean, number
+            if number:
+                has_numbers = True
+                joined_english.append(clean)
+            elif has_numbers:
+                joined_english[-1] += '/' + clean
+            else:
+                joined_english.append(clean)
+
+        english = joined_english
+
         glosses = []
-        for gloss in english: 
+        for gloss in english:
             clean_gloss, related_words = self.extract_related(gloss)
             clean_gloss, tags = self.extract_tags(clean_gloss)
             clean_gloss, fields = self.extract_fields(clean_gloss)
@@ -166,7 +187,7 @@ class Parser(object):
 
         ent_seq = raw_entry.split('/')[-2]
 
-        # entL sequences that end in X have audio clips 
+        # entL sequences that end in X have audio clips
         has_audio = ent_seq[-1] == 'X'
 
         # throw away the entL and X part, keeping only the id
@@ -184,16 +205,16 @@ class Parser(object):
 
             for kanji, jtag in kanji_tagged:
                 kwargs = {
-                    "glosses": glosses, 
-                    "japanese": kanji, 
+                    "glosses": glosses,
+                    "japanese": kanji,
                     "furigana": kana,
-                    "tags": tags, 
-                    "kanji_tags": jtag, 
-                    "kana_tags": ktag, 
-                    "ent_seq": ent_seq, 
+                    "tags": main_tags,
+                    "kanji_tags": jtag,
+                    "kana_tags": ktag,
+                    "ent_seq": ent_seq,
                     "has_audio": has_audio,
                 }
-                if not matching_kanji: 
+                if not matching_kanji:
                     entries.append(EdictEntry(**kwargs))
                 else:
                     if kanji in matching_kanji:
