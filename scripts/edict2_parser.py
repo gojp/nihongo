@@ -152,13 +152,16 @@ class Parser(object):
         english, main_tags = self.extract_tags(raw_english[0])
         english = [english] + raw_english[1:]
 
+        if english[-1] == '(P)':
+            main_tags = tuple(set(main_tags + ('P',)))
+            english = english[:-1]
+
         # join numbered entries:
         joined_english = []
         has_numbers = False
         for e in english:
             clean, number = self.extract_tags(e, re_number_tag)
             clean = clean.strip()
-            print clean, number
             if number:
                 has_numbers = True
                 joined_english.append(clean)
