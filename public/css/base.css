@@ -100,12 +100,15 @@ a, a:hover {
   background: #0089A7;
   font-weight: normal;
 }
-.word a.main-entry {
+.word a {
   color: inherit;
   text-decoration: none;
 }
+.word a:hover {
+  text-decoration: underline;
+}
 .word strong {
-  padding: 2px 4px;
+  padding: 2px 0px;
   background: #A8CCDB;
   font-weight: normal;
 }
