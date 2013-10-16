@@ -153,7 +153,7 @@ class Parser(object):
         english = [english] + raw_english[1:]
 
         if english[-1] == '(P)':
-            main_tags = tuple(set(main_tags + ('P',)))
+            main_tags = tuple(set(list(main_tags) + ['P']))
             english = english[:-1]
 
         # join numbered entries:
