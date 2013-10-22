@@ -7,9 +7,8 @@ import (
 )
 
 type User struct {
-	Name     string
 	Username string
-	Password []byte
+	Password string
 }
 
 func (u *User) String() string {
@@ -22,11 +21,6 @@ func (user *User) Validate(v *revel.Validation) {
 	v.Check(user.Username,
 		revel.Required{},
 		revel.Match{userRegex},
-	)
-
-	v.Check(user.Name,
-		revel.Required{},
-		revel.MaxSize{100},
 	)
 }
 
