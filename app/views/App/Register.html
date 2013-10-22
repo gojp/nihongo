@@ -2,21 +2,33 @@
 {{template "header.html" .}}
 
 <body>
-<h1>Register:</h1>
-<form action="/register" method="POST">
-  {{with $field := field "user.Username" .}}
-    <p class="{{$field.ErrorClass}}">
-      <strong>Username:</strong>
-      <input type="text" name="{{$field.Name}}" size="16" value="{{$field.Flash}}"> *
-      <span class="error">{{$field.Error}}</span>
-    </p>
-  {{end}}
+<div id="wrap">
+  <div id="main">
+    <div class="container">
+      <div id="page" class="page">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+             <h1>Register:</h1>
+             <form action="/auth/register" method="POST">
+               {{with $field := field "user.Username" .}}
+                 <p class="{{$field.ErrorClass}}">
+                   <strong>Username:</strong>
+                   <input type="text" name="{{$field.Name}}" size="16" value="{{$field.Flash}}"> *
+                   <span class="error">{{$field.Error}}</span>
+                 </p>
+               {{end}}
 
-  {{/* other fields */}}
+               {{/* other fields */}}
 
-  <p class="buttons">
-    <input type="submit" value="Register"> <a href="/">Cancel</a>
-  </p>
-</form>
+               <p class="buttons">
+                 <input type="submit" value="Register"> <a href="/">Cancel</a>
+               </p>
+             </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {{template "footer.html" .}}
