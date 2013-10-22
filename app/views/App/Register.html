@@ -1,7 +1,7 @@
-{{/* app/views/Application/Register.html */}}
-
+{{set . "title" "Register for Nihongo.io"}}
 {{template "header.html" .}}
 
+<body>
 <h1>Register:</h1>
 <form action="/register" method="POST">
   {{with $field := field "user.Username" .}}
