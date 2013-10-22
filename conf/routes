@@ -8,6 +8,10 @@ GET     /                                       App.Index
 GET     /info/about                             App.About
 GET     /search                                 App.SearchGet
 GET     /search/:query                          App.Search
+GET     /auth/register                          App.Register
+POST    /auth/register                          App.SaveUser
+POST    /login                                  App.Login
+GET     /logout                                 App.Logout
 
 # Favicon and indexing stuff
 GET     /favicon.ico                            Static.Serve("public/images/favicon.ico")
