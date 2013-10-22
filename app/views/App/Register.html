@@ -9,7 +9,7 @@
         <div class="row">
           <div class="col-md-6 col-md-offset-3">
              <h1>Register:</h1>
-             <form action="/auth/register" method="POST">
+             <form action="{{url "App.SaveUser"}}" method="POST">
                {{with $field := field "user.Username" .}}
                  <p class="{{$field.ErrorClass}}">
                    <strong>Username:</strong>
@@ -18,10 +18,24 @@
                  </p>
                {{end}}
 
-               {{/* other fields */}}
+               {{with $field := field "user.Password" .}}
+                 <p class="{{$field.ErrorClass}}">
+                   <strong>Password:</strong>
+                   <input type="password" name="{{$field.Name}}" size="16" value="{{$field.Flash}}"> *
+                   <span class="error">{{$field.Error}}</span>
+                 </p>
+               {{end}}
+
+               {{with $field := field "verifyPassword" .}}
+                 <p class="{{$field.ErrorClass}}">
+                   <strong>Verify Password:</strong>
+                   <input type="password" name="{{$field.Name}}" size="16" value="{{$field.Flash}}"> *
+                   <span class="error">{{$field.Error}}</span>
+                 </p>
+               {{end}}
 
                <p class="buttons">
-                 <input type="submit" value="Register"> <a href="/">Cancel</a>
+               <input type="submit" value="Register"> <a href="{{url "App.Index"}}">Cancel</a>
                </p>
              </form>
           </div>
