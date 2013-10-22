@@ -9,6 +9,7 @@ import (
 	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 	"log"
 	"strings"
 )
@@ -122,6 +123,36 @@ func (c App) SaveUser(user models.User, verifyPassword string) revel.Result {
 
 	c.Session["user"] = user.Username
 	c.Flash.Success("Welcome, " + user.Username)
+	return c.Redirect(routes.App.Index())
+}
+
+func (c App) getUser(username string) *models.User {
+	users := c.MongoSession.DB("greenbook").C("users")
+	result := models.User{}
+	users.Find(bson.M{"username": username}).One(&result)
+	return &result
+}
+
+func (c App) Login(username, password string) revel.Result {
+	user := c.getUser(username)
+	if user != nil {
+		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+		if err == nil {
+			c.Session["user"] = username
+			c.Flash.Success("Welcome, " + username)
+			return c.Redirect(routes.App.Index())
+		}
+	}
+
+	c.Flash.Out["username"] = username
+	c.Flash.Error("Login failed")
+	return c.Redirect(routes.App.Index())
+}
+
+func (c App) Logout() revel.Result {
+	for k := range c.Session {
+		delete(c.Session, k)
+	}
 	return c.Redirect(routes.App.Index())
 }
 
