@@ -79,7 +79,7 @@ func (c App) About() revel.Result {
 
 func addUser(collection *mgo.Collection, username, password string) {
 	index := mgo.Index{
-		Key:        []string{"username", "email"},
+		Key:        []string{"username"},
 		Unique:     true,
 		DropDups:   true,
 		Background: true,
