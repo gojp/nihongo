@@ -1,17 +1,21 @@
 package controllers
 
 import (
+	"code.google.com/p/go.crypto/bcrypt"
 	"encoding/json"
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
+	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
+	"labix.org/v2/mgo"
 	"log"
 	"strings"
 )
 
 type App struct {
 	*revel.Controller
+	revmgo.MongoController
 }
 
 type Word struct {
@@ -70,6 +74,55 @@ func (c App) SearchGet() revel.Result {
 
 func (c App) About() revel.Result {
 	return c.Render()
+}
+
+func addUser(collection *mgo.Collection, username, password string) {
+	index := mgo.Index{
+		Key:        []string{"username", "email"},
+		Unique:     true,
+		DropDups:   true,
+		Background: true,
+		Sparse:     true,
+	}
+
+	err := collection.EnsureIndex(index)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	bcryptPassword, _ := bcrypt.GenerateFromPassword(
+		[]byte(password), bcrypt.DefaultCost)
+
+	err = collection.Insert(&models.User{Username: username, Password: string(bcryptPassword)})
+
+	if err != nil {
+		log.Panic(err)
+	}
+}
+
+func (c App) Register() revel.Result {
+	title := "Register"
+	return c.Render(title)
+}
+
+func (c App) SaveUser(user models.User, verifyPassword string) revel.Result {
+	c.Validation.Required(verifyPassword)
+	c.Validation.Required(verifyPassword == user.Password)
+	c.Message("Password does not match")
+	user.Validate(c.Validation)
+
+	if c.Validation.HasErrors() {
+		c.Validation.Keep()
+		c.FlashParams()
+		return c.Redirect(routes.App.Register())
+	}
+
+	collection := c.MongoSession.DB("greenbook").C("users")
+	addUser(collection, user.Username, user.Password)
+
+	c.Session["user"] = user.Username
+	c.Flash.Success("Welcome, " + user.Username)
+	return c.Redirect(routes.App.Index())
 }
 
 func (c App) Index() revel.Result {
