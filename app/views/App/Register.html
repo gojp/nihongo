@@ -12,30 +12,27 @@
              <form action="{{url "App.SaveUser"}}" method="POST">
                {{with $field := field "user.Username" .}}
                  <p class="{{$field.ErrorClass}}">
-                   <strong>Username:</strong>
-                   <input type="text" name="{{$field.Name}}" size="16" value="{{$field.Flash}}"> *
+                   <input type="text" name="{{$field.Name}}" size="16" class="form-control" placeholder="Choose a username" value="{{$field.Flash}}">
                    <span class="error">{{$field.Error}}</span>
                  </p>
                {{end}}
 
                {{with $field := field "user.Password" .}}
                  <p class="{{$field.ErrorClass}}">
-                   <strong>Password:</strong>
-                   <input type="password" name="{{$field.Name}}" size="16" value="{{$field.Flash}}"> *
+                   <input type="password" name="{{$field.Name}}" size="16" class="form-control" placeholder="Create a password" value="{{$field.Flash}}">
                    <span class="error">{{$field.Error}}</span>
                  </p>
                {{end}}
 
                {{with $field := field "verifyPassword" .}}
                  <p class="{{$field.ErrorClass}}">
-                   <strong>Verify Password:</strong>
-                   <input type="password" name="{{$field.Name}}" size="16" value="{{$field.Flash}}"> *
+                   <input type="password" name="{{$field.Name}}" size="16" class="form-control" placeholder="Verify Password" value="{{$field.Flash}}">
                    <span class="error">{{$field.Error}}</span>
                  </p>
                {{end}}
 
                <p class="buttons">
-               <input type="submit" value="Register"> <a href="{{url "App.Index"}}">Cancel</a>
+               <input type="submit" class="btn btn-success btn-lg" value="Register">
                </p>
              </form>
           </div>
