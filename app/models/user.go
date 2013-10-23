@@ -7,20 +7,20 @@ import (
 )
 
 type User struct {
-	Username string
+	Email    string
 	Password string
 }
 
 func (u *User) String() string {
-	return fmt.Sprintf("User(%s)", u.Username)
+	return fmt.Sprintf("User(%s)", u.Email)
 }
 
-var userRegex = regexp.MustCompile("^\\w*$")
+var emailPattern = regexp.MustCompile("[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?")
 
 func (user *User) Validate(v *revel.Validation) {
-	v.Check(user.Username,
+	v.Check(user.Email,
 		revel.Required{},
-		revel.Match{userRegex},
+		revel.Match{emailPattern},
 	)
 }
 
