@@ -1,0 +1,28 @@
+{{set . "title" "Nihongo.io Login Page"}}
+{{template "header.html" .}}
+
+<body>
+<div id="wrap">
+  <div id="main">
+    <div class="container">
+      <div id="page" class="page">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+           <h1>Sign in:</h1>
+            <form class="form-inline" action="{{url "App.Login"}}" id="formLogin" method="POST">
+              <div class="form-group">
+                <input type="text" name="email" size="19" class="form-control" placeholder="Email" value="{{.flash.email}}" />
+              </div>
+              <div class="form-group">
+                <input type="password" name="password" size="19" class="form-control" placeholder="Password"/>
+              </div>
+              <button type="submit" class="btn btn-default">Sign in</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{template "footer.html" .}}
