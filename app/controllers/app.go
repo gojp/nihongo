@@ -77,9 +77,9 @@ func (c App) About() revel.Result {
 	return c.Render()
 }
 
-func addUser(collection *mgo.Collection, username, password string) {
+func addUser(collection *mgo.Collection, email, password string) {
 	index := mgo.Index{
-		Key:        []string{"username"},
+		Key:        []string{"email"},
 		Unique:     true,
 		DropDups:   true,
 		Background: true,
@@ -94,7 +94,7 @@ func addUser(collection *mgo.Collection, username, password string) {
 	bcryptPassword, _ := bcrypt.GenerateFromPassword(
 		[]byte(password), bcrypt.DefaultCost)
 
-	err = collection.Insert(&models.User{Email: username, Password: string(bcryptPassword)})
+	err = collection.Insert(&models.User{Email: email, Password: string(bcryptPassword)})
 
 	if err != nil {
 		log.Panic(err)
@@ -123,25 +123,25 @@ func (c App) SaveUser(user models.User) revel.Result {
 	return c.Redirect(routes.App.Index())
 }
 
-func (c App) getUser(username string) *models.User {
+func (c App) getUser(email string) *models.User {
 	users := c.MongoSession.DB("greenbook").C("users")
 	result := models.User{}
-	users.Find(bson.M{"username": username}).One(&result)
+	users.Find(bson.M{"email": email}).One(&result)
 	return &result
 }
 
-func (c App) Login(username, password string) revel.Result {
-	user := c.getUser(username)
+func (c App) Login(email, password string) revel.Result {
+	user := c.getUser(email)
 	if user != nil {
 		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 		if err == nil {
-			c.Session["user"] = username
-			c.Flash.Success("Welcome, " + username)
+			c.Session["user"] = email
+			c.Flash.Success("Welcome, " + email)
 			return c.Redirect(routes.App.Index())
 		}
 	}
 
-	c.Flash.Out["username"] = username
+	c.Flash.Out["email"] = email
 	c.Flash.Error("Login failed")
 	return c.Redirect(routes.App.Index())
 }
