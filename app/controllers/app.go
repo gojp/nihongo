@@ -106,6 +106,11 @@ func (c App) Register() revel.Result {
 	return c.Render(title)
 }
 
+func (c App) LoginPage() revel.Result {
+	title := "Login"
+	return c.Render(title)
+}
+
 func (c App) SaveUser(user models.User) revel.Result {
 	user.Validate(c.Validation)
 
