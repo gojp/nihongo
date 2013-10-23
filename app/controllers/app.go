@@ -94,7 +94,7 @@ func addUser(collection *mgo.Collection, username, password string) {
 	bcryptPassword, _ := bcrypt.GenerateFromPassword(
 		[]byte(password), bcrypt.DefaultCost)
 
-	err = collection.Insert(&models.User{Username: username, Password: string(bcryptPassword)})
+	err = collection.Insert(&models.User{Email: username, Password: string(bcryptPassword)})
 
 	if err != nil {
 		log.Panic(err)
@@ -106,10 +106,7 @@ func (c App) Register() revel.Result {
 	return c.Render(title)
 }
 
-func (c App) SaveUser(user models.User, verifyPassword string) revel.Result {
-	c.Validation.Required(verifyPassword)
-	c.Validation.Required(verifyPassword == user.Password)
-	c.Message("Password does not match")
+func (c App) SaveUser(user models.User) revel.Result {
 	user.Validate(c.Validation)
 
 	if c.Validation.HasErrors() {
@@ -119,10 +116,10 @@ func (c App) SaveUser(user models.User, verifyPassword string) revel.Result {
 	}
 
 	collection := c.MongoSession.DB("greenbook").C("users")
-	addUser(collection, user.Username, user.Password)
+	addUser(collection, user.Email, user.Password)
 
-	c.Session["user"] = user.Username
-	c.Flash.Success("Welcome, " + user.Username)
+	c.Session["user"] = user.Email
+	c.Flash.Success("Welcome, " + user.Email)
 	return c.Redirect(routes.App.Index())
 }
 

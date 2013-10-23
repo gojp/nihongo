@@ -10,9 +10,9 @@
           <div class="col-md-6 col-md-offset-3">
              <h1>Register:</h1>
              <form action="{{url "App.SaveUser"}}" method="POST">
-               {{with $field := field "user.Username" .}}
+               {{with $field := field "user.Email" .}}
                  <p class="{{$field.ErrorClass}}">
-                   <input type="text" name="{{$field.Name}}" size="16" class="form-control" placeholder="Choose a username" value="{{$field.Flash}}">
+                   <input type="text" name="{{$field.Name}}" size="16" class="form-control" placeholder="Your email" value="{{$field.Flash}}">
                    <span class="error">{{$field.Error}}</span>
                  </p>
                {{end}}
@@ -20,13 +20,6 @@
                {{with $field := field "user.Password" .}}
                  <p class="{{$field.ErrorClass}}">
                    <input type="password" name="{{$field.Name}}" size="16" class="form-control" placeholder="Create a password" value="{{$field.Flash}}">
-                   <span class="error">{{$field.Error}}</span>
-                 </p>
-               {{end}}
-
-               {{with $field := field "verifyPassword" .}}
-                 <p class="{{$field.ErrorClass}}">
-                   <input type="password" name="{{$field.Name}}" size="16" class="form-control" placeholder="Verify Password" value="{{$field.Flash}}">
                    <span class="error">{{$field.Error}}</span>
                  </p>
                {{end}}
