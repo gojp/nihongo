@@ -8,7 +8,8 @@
       <div id="page" class="page">
         <div class="row">
           <div class="col-md-6 col-md-offset-3">
-             <h1>Register:</h1>
+             <h1>Sign up</h1>
+             <p>(being a nihongo.io user means seeing no ads!)</p>
              <form action="{{url "App.SaveUser"}}" method="POST">
                {{with $field := field "user.Email" .}}
                  <p class="{{$field.ErrorClass}}">
