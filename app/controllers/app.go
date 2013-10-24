@@ -24,11 +24,6 @@ type PopularSearch struct {
 	Term string
 }
 
-// wrap a string in strong tags
-func makeStrong(query string) string {
-	return "<strong>" + query + "</strong>"
-}
-
 // convert the query to hiragana and katakana. if it's already in
 // hiragana or katakana, it will just be the same.
 func convertQueryToKana(query string) (hiragana, katakana string) {
@@ -44,9 +39,9 @@ func highlightQuery(w Word, query string) {
 	// convert original query to kana
 	h, k := convertQueryToKana(query)
 	// wrap the query in strong tags
-	queryHighlighted := makeStrong(query)
-	hiraganaHighlighted := makeStrong(h)
-	katakanaHighlighted := makeStrong(k)
+	queryHighlighted := helpers.MakeStrong(query)
+	hiraganaHighlighted := helpers.MakeStrong(h)
+	katakanaHighlighted := helpers.MakeStrong(k)
 
 	// if the original input is Japanese, then the original input converted
 	// to hiragana and katakana will be equal, so just choose one
