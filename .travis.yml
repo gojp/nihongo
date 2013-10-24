@@ -14,7 +14,7 @@ install:
 - go get github.com/mattbaird/elastigo
 - go get github.com/araddon/gou
 script:
-- revel test github.com/gojp/nihongo HelpersTest
+- revel test github.com/gojp/nihongo dev HelpersTest
 notifications:
   irc: chat.freenode.net#gojp
 env:
