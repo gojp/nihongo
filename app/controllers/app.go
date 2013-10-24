@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/gojp/kana"
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
@@ -24,29 +23,16 @@ type PopularSearch struct {
 	Term string
 }
 
-// wrap a string in strong tags
-func makeStrong(query string) string {
-	return "<strong>" + query + "</strong>"
-}
-
-// convert the query to hiragana and katakana. if it's already in
-// hiragana or katakana, it will just be the same.
-func convertQueryToKana(query string) (hiragana, katakana string) {
-	h := kana.RomajiToHiragana(query)
-	k := kana.RomajiToKatakana(query)
-	return h, k
-}
-
 // Wrap the query in <strong> tags so that we can highlight it in the results
 func highlightQuery(w Word, query string) {
 	// make regular expression that matches the original query
 	re := regexp.MustCompile(`\b` + regexp.QuoteMeta(query) + `\b`)
 	// convert original query to kana
-	h, k := convertQueryToKana(query)
+	h, k := helpers.ConvertQueryToKana(query)
 	// wrap the query in strong tags
-	queryHighlighted := makeStrong(query)
-	hiraganaHighlighted := makeStrong(h)
-	katakanaHighlighted := makeStrong(k)
+	queryHighlighted := helpers.MakeStrong(query)
+	hiraganaHighlighted := helpers.MakeStrong(h)
+	katakanaHighlighted := helpers.MakeStrong(k)
 
 	// if the original input is Japanese, then the original input converted
 	// to hiragana and katakana will be equal, so just choose one
