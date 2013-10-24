@@ -12,6 +12,9 @@ type HelpersTest struct {
 func (s *HelpersTest) Before() {
 }
 
+func (s *HelpersTest) After() {
+}
+
 func (s *HelpersTest) TestMakeStrong() {
 	// some basic checks
 	s.Assert(helpers.MakeStrong("gopher") == "<strong>gopher</strong>")
@@ -22,7 +25,4 @@ func (s *HelpersTest) TestConvertQueryToKana() {
 	h, k := helpers.ConvertQueryToKana("tesuto")
 	s.Assert(h == "てすと")
 	s.Assert(k == "テスト")
-}
-
-func (s *HelpersTest) After() {
 }
