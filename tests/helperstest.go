@@ -17,5 +17,12 @@ func (s *HelpersTest) TestMakeStrong() {
 	s.Assert(helpers.MakeStrong("gopher") == "<strong>gopher</strong>")
 }
 
+func (s *HelpersTest) TestConvertQueryToKana() {
+	// some basic checks
+	h, k := helpers.ConvertQueryToKana("tesuto")
+	s.Assert(h == "てすと")
+	s.Assert(k == "テスト")
+}
+
 func (s *HelpersTest) After() {
 }
