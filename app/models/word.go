@@ -37,13 +37,13 @@ func (w *Word) HighlightQuery(query string) {
 	// to hiragana and katakana will be equal, so just choose one
 	// to highlight so that we only end up with one pair of strong tags
 	w.JapaneseHL = strings.Replace(w.Japanese, h, hiraganaHighlighted, -1)
-	if hiraganaHighlighted != katakanaHighlighted {
+	if h != k {
 		w.JapaneseHL = strings.Replace(w.JapaneseHL, k, katakanaHighlighted, -1)
 	}
 
 	// highlight the furigana too, same as above
 	w.FuriganaHL = strings.Replace(w.Furigana, h, hiraganaHighlighted, -1)
-	if k != h {
+	if h != k {
 		w.FuriganaHL = strings.Replace(w.FuriganaHL, k, katakanaHighlighted, -1)
 	}
 
