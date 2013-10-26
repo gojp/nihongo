@@ -29,4 +29,20 @@ func (s *ModelsTest) TestHighlightQuery() {
 	s.Assert(w.FuriganaHL == "<strong>テスト</strong>")
 	s.Assert(w.Japanese == "テスト")
 	s.Assert(w.JapaneseHL == "<strong>テスト</strong>")
+
+	w.HighlightQuery("テスト")
+	s.Assert(w.English[0] == "test")
+	s.Assert(w.EnglishHL[0] == "test")
+	s.Assert(w.Furigana == "テスト")
+	s.Assert(w.FuriganaHL == "<strong>テスト</strong>")
+	s.Assert(w.Japanese == "テスト")
+	s.Assert(w.JapaneseHL == "<strong>テスト</strong>")
+
+	w.HighlightQuery("test")
+	s.Assert(w.English[0] == "test")
+	s.Assert(w.EnglishHL[0] == "<strong>test</strong>")
+	s.Assert(w.Furigana == "テスト")
+	s.Assert(w.FuriganaHL == "テスト")
+	s.Assert(w.Japanese == "テスト")
+	s.Assert(w.JapaneseHL == "テスト")
 }
