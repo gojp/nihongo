@@ -25,11 +25,10 @@ type Word struct {
 // Wrap the query in <strong> tags so that we can highlight it in the results
 func (w *Word) HighlightQuery(query string) {
 	// make regular expression that matches the original query
-	re := regexp.MustCompile(`\b` + regexp.QuoteMeta(query) + `\b`)
+	re := regexp.MustCompile(`(?i)\b` + regexp.QuoteMeta(query) + `\b`)
 	// convert original query to kana
 	h, k := helpers.ConvertQueryToKana(query)
 	// wrap the query in strong tags
-	queryHighlighted := helpers.MakeStrong(query)
 	hiraganaHighlighted := helpers.MakeStrong(h)
 	katakanaHighlighted := helpers.MakeStrong(k)
 
@@ -50,7 +49,11 @@ func (w *Word) HighlightQuery(query string) {
 	// highlight the query inside the list of English definitions
 	w.EnglishHL = []string{}
 	for _, e := range w.English {
-		e = re.ReplaceAllString(e, queryHighlighted)
+		for _, listOfSubmatches := range re.FindAllStringSubmatch(e, -1) {
+			for _, s := range listOfSubmatches {
+				e = strings.Replace(e, s, helpers.MakeStrong(s), -1)
+			}
+		}
 		w.EnglishHL = append(w.EnglishHL, e)
 	}
 }
