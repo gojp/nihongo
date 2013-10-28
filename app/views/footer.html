@@ -12,8 +12,12 @@
             <p>We're building the world's best Japanese dictionary. <a href="/info/about">Learn more</a></p>
         </div>
         <div>
+        {{if not .user}}
           <a href="{{url "App.Register"}}">Sign Up</a>
           <a href="{{url "App.Login"}}">Sign In</a>
+        {{else}}
+        <strong>{{.user.Email}}</strong>
+        {{end}}
         </div>
     </div>
   </body>
