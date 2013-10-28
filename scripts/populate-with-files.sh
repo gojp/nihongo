@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ $# -eq 0 ]
   then
     echo "output JSON from edict2_parser.py is required"
