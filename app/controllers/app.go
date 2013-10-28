@@ -27,6 +27,16 @@ type PopularSearch struct {
 	Term string
 }
 
+func (c App) connected() *models.User {
+	if c.RenderArgs["email"] != nil {
+		return c.RenderArgs["email"].(*models.User)
+	}
+	if email, ok := c.Session["email"]; ok {
+		return c.getUser(email)
+	}
+	return nil
+}
+
 func getWordList(hits [][]byte, query string) (wordList []Word) {
 	// highlight queries and build Word object
 	for _, hit := range hits {
@@ -123,7 +133,7 @@ func (c App) SaveUser(user models.User) revel.Result {
 	collection := c.MongoSession.DB("greenbook").C("users")
 	addUser(collection, user.Email, user.Password)
 
-	c.Session["user"] = user.Email
+	c.Session["email"] = user.Email
 	c.Flash.Success("Welcome, " + user.Email)
 	return c.Redirect(routes.App.Index())
 }
@@ -140,7 +150,7 @@ func (c App) Login(email, password string) revel.Result {
 	if user != nil {
 		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 		if err == nil {
-			c.Session["user"] = email
+			c.Session["email"] = email
 			c.Flash.Success("Welcome, " + email)
 			return c.Redirect(routes.App.Index())
 		}
@@ -178,6 +188,6 @@ func (c App) Index() revel.Result {
 		PopularSearch{"funny"},
 		PopularSearch{"にほんご"},
 	}
-
-	return c.Render(termList)
+	user := c.connected()
+	return c.Render(termList, user)
 }
