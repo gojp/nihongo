@@ -124,6 +124,11 @@ a, a:hover {
   max-width: 50%;
 }
 
+.front-page-banner {
+  text-align: center;
+  margin-top: 50px;
+}
+
 @media (min-width: 767px) {
   .header .title img {
     max-width: 100%;
