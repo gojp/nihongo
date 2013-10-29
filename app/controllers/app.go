@@ -1,17 +1,22 @@
 package controllers
 
 import (
+	"code.google.com/p/go.crypto/bcrypt"
 	"encoding/json"
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
+	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
+	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 	"log"
 	"strings"
 )
 
 type App struct {
 	*revel.Controller
+	revmgo.MongoController
 }
 
 type Word struct {
@@ -20,6 +25,16 @@ type Word struct {
 
 type PopularSearch struct {
 	Term string
+}
+
+func (c App) connected() *models.User {
+	if c.RenderArgs["email"] != nil {
+		return c.RenderArgs["email"].(*models.User)
+	}
+	if email, ok := c.Session["email"]; ok {
+		return c.getUser(email)
+	}
+	return nil
 }
 
 func getWordList(hits [][]byte, query string) (wordList []Word) {
@@ -72,6 +87,87 @@ func (c App) About() revel.Result {
 	return c.Render()
 }
 
+func addUser(collection *mgo.Collection, email, password string) {
+	index := mgo.Index{
+		Key:        []string{"email"},
+		Unique:     true,
+		DropDups:   true,
+		Background: true,
+		Sparse:     true,
+	}
+
+	err := collection.EnsureIndex(index)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	bcryptPassword, _ := bcrypt.GenerateFromPassword(
+		[]byte(password), bcrypt.DefaultCost)
+
+	err = collection.Insert(&models.User{Email: email, Password: string(bcryptPassword)})
+
+	if err != nil {
+		log.Panic(err)
+	}
+}
+
+func (c App) Register() revel.Result {
+	title := "Register"
+	return c.Render(title)
+}
+
+func (c App) LoginPage() revel.Result {
+	title := "Login"
+	return c.Render(title)
+}
+
+func (c App) SaveUser(user models.User) revel.Result {
+	user.Validate(c.Validation)
+
+	if c.Validation.HasErrors() {
+		c.Validation.Keep()
+		c.FlashParams()
+		return c.Redirect(routes.App.Register())
+	}
+
+	collection := c.MongoSession.DB("greenbook").C("users")
+	addUser(collection, user.Email, user.Password)
+
+	c.Session["email"] = user.Email
+	c.Flash.Success("Welcome, " + user.Email)
+	return c.Redirect(routes.App.Index())
+}
+
+func (c App) getUser(email string) *models.User {
+	users := c.MongoSession.DB("greenbook").C("users")
+	result := models.User{}
+	users.Find(bson.M{"email": email}).One(&result)
+	return &result
+}
+
+func (c App) Login(email, password string) revel.Result {
+	user := c.getUser(email)
+	if user != nil {
+		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+		if err == nil {
+			c.Session["email"] = email
+			c.Flash.Success("Welcome, " + email)
+			return c.Redirect(routes.App.Index())
+		}
+	}
+
+	c.Flash.Out["email"] = email
+	c.Flash.Error("Login failed")
+	return c.Redirect(routes.App.Index())
+}
+
+func (c App) Logout() revel.Result {
+	for k := range c.Session {
+		delete(c.Session, k)
+	}
+	return c.Redirect(routes.App.Index())
+}
+
 func (c App) Index() revel.Result {
 
 	// get the popular searches
@@ -92,6 +188,6 @@ func (c App) Index() revel.Result {
 		PopularSearch{"funny"},
 		PopularSearch{"にほんご"},
 	}
-
-	return c.Render(termList)
+	user := c.connected()
+	return c.Render(termList, user)
 }
