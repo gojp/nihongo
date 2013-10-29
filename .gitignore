@@ -4,5 +4,4 @@ routes/
 *.swp
 *.pyc
 data/
-scripts/output.json
-scripts/
+scripts/output.json	
