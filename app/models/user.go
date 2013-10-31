@@ -18,10 +18,9 @@ func (u *User) String() string {
 var emailPattern = regexp.MustCompile("[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?")
 
 func (user *User) Validate(v *revel.Validation) {
-	v.Check(user.Email,
-		revel.Required{},
-		revel.Match{emailPattern},
-	)
+	v.Required(user.Email)
+	v.Match(user.Email, emailPattern).Message("We're sorry, but this email address seems to be invalid. Please enter a valid email address.")
+	ValidatePassword(v, user.Password).Key("user.Password")
 }
 
 func ValidatePassword(v *revel.Validation, password string) *revel.ValidationResult {
