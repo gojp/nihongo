@@ -9,6 +9,7 @@ import (
 type User struct {
 	Email    string
 	Password string
+	Words    []string
 }
 
 func (u *User) String() string {
