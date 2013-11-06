@@ -16,7 +16,7 @@
           <a href="{{url "App.Register"}}">Sign Up</a>
           <a href="{{url "App.Login"}}">Sign In</a>
         {{else}}
-          <strong>{{.user.Email}}</strong>
+          <a href="/user/profile"><strong>{{.user.Email}}</strong></a>
           <a href="{{url "App.Logout"}}">Sign Out</a>
         {{end}}
         </div>
