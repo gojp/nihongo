@@ -73,7 +73,8 @@ func (c App) Details(query string) revel.Result {
 	wordList := getWordList(hits, query)
 	pageTitle := query + " in Japanese"
 
-	return c.Render(wordList, query, pageTitle)
+	user := c.connected()
+	return c.Render(wordList, query, pageTitle, user)
 }
 
 func (c App) SearchGet() revel.Result {
@@ -85,6 +86,24 @@ func (c App) SearchGet() revel.Result {
 
 func (c App) About() revel.Result {
 	return c.Render()
+}
+
+func (a App) SavePhrase(phrase string) revel.Result {
+	if len(phrase) == 0 || a.connected() == nil {
+		return a.Redirect(routes.App.Index())
+	}
+	user := a.connected()
+	user.Words = append(user.Words, phrase)
+
+	// todo: should be in model save function or the like
+	collection := a.MongoSession.DB("greenbook").C("users")
+	err := collection.Update(bson.M{"email": user.Email}, bson.M{"$set": bson.M{"words": user.Words}})
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return a.RenderJson(bson.M{"result": "ok"})
 }
 
 func addUser(collection *mgo.Collection, email, password string) {
@@ -119,6 +138,12 @@ func (c App) Register() revel.Result {
 func (c App) LoginPage() revel.Result {
 	title := "Login"
 	return c.Render(title)
+}
+
+func (c App) Profile() revel.Result {
+	user := c.connected()
+	wordList := user.Words
+	return c.Render(wordList)
 }
 
 func (c App) SaveUser(user models.User) revel.Result {
