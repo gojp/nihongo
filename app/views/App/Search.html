@@ -1,4 +1,5 @@
 <table class="results-table">
+{{$user := .user}}
 {{range .wordList}}
   {{$entry := .}}
   <tr class="word">
@@ -19,6 +20,16 @@
         <div class="gloss">{{add $i 1}}. <a class="english-entry" href="/{{get $entry.English $i}}">{{html $gloss}}</a></div>
       {{end}}
     </td>
+
+    {{if $user}}
+    <td class="save">
+      {{if contains $entry.Japanese $user.Words}}
+      <span>Saved</span>
+      {{else}}
+      <a class="btn btn-save" data-value="{{ $entry.Japanese }}" data-action="save" href="#">Save</a>
+      {{end}}
+    </td>
+    {{end}}
   </div>
   </tr>
 {{end}}
