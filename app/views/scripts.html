@@ -35,5 +35,18 @@ $(function(){
 	$('.results-table .word').on('click', function(){
 		window.location.href = $(this).find('a.main-entry').attr('href');
 	});
+
+	$('[data-action="save"]').on('click', function(e){
+		var term = $(this).attr('data-value');
+		$.ajax('/save/' + term, {
+			type: 'post',
+			context: {'target': this},
+			dataType: 'json',
+			success: function(){
+				$(this.target).replaceWith('<span>Saved!</span>');
+			}
+		});
+		return false;
+	});
 });
 </script>
