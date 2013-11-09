@@ -24,7 +24,7 @@ func (s *ModelsTest) TestHighlightQuery() {
 	}
 	w.HighlightQuery("tesuto")
 	s.Assert(w.English[0] == "test")
-	s.Assert(w.EnglishHL[0] == "test")
+	s.Assert(w.EnglishHL[0][0] == "test")
 	s.Assert(w.Furigana == "テスト")
 	s.Assert(w.FuriganaHL == "<strong>テスト</strong>")
 	s.Assert(w.Japanese == "テスト")
@@ -32,7 +32,7 @@ func (s *ModelsTest) TestHighlightQuery() {
 
 	w.HighlightQuery("テスト")
 	s.Assert(w.English[0] == "test")
-	s.Assert(w.EnglishHL[0] == "test")
+	s.Assert(w.EnglishHL[0][0] == "test")
 	s.Assert(w.Furigana == "テスト")
 	s.Assert(w.FuriganaHL == "<strong>テスト</strong>")
 	s.Assert(w.Japanese == "テスト")
@@ -40,7 +40,7 @@ func (s *ModelsTest) TestHighlightQuery() {
 
 	w.HighlightQuery("test")
 	s.Assert(w.English[0] == "test")
-	s.Assert(w.EnglishHL[0] == "<strong>test</strong>")
+	s.Assert(w.EnglishHL[0][0] == "<strong>test</strong>")
 	s.Assert(w.Furigana == "テスト")
 	s.Assert(w.FuriganaHL == "テスト")
 	s.Assert(w.Japanese == "テスト")
