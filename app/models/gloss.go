@@ -1,8 +1,9 @@
 package models
 
 type Gloss struct {
-	English string
-	Tags    []string
-	Related []string
-	Common  bool
+	English      string
+	EnglishSplit []string
+	Tags         []string
+	Related      []string
+	Common       bool
 }

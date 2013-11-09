@@ -13,7 +13,7 @@ type Word struct {
 	Fields     []string
 	Glosses    []Gloss
 	English    []string
-	EnglishHL  []string // highlighted english
+	EnglishHL  [][]string // highlighted english
 	Furigana   string
 	FuriganaHL string // highlighted furigana
 	Japanese   string
@@ -47,9 +47,12 @@ func (w *Word) HighlightQuery(query string) {
 	}
 
 	// highlight the query inside the list of English definitions
-	w.EnglishHL = []string{}
+	w.EnglishHL = [][]string{}
 	for _, e := range w.English {
-		e = re.ReplaceAllString(e, helpers.MakeStrong("$1"))
-		w.EnglishHL = append(w.EnglishHL, e)
+		splitEnglish := strings.Split(e, "/")
+		for se := range splitEnglish {
+			splitEnglish[se] = re.ReplaceAllString(splitEnglish[se], helpers.MakeStrong("$1"))
+		}
+		w.EnglishHL = append(w.EnglishHL, splitEnglish)
 	}
 }
