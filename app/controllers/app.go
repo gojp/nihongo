@@ -53,7 +53,7 @@ func getWordList(hits [][]byte, query string) (wordList []Word) {
 
 func (a App) Search(query string) revel.Result {
 	if len(query) == 0 {
-		return a.Redirect(routes.App.Index())
+		return a.Redirect(App.Index)
 	}
 	hits := helpers.Search(query)
 	wordList := getWordList(hits, query)
@@ -62,7 +62,7 @@ func (a App) Search(query string) revel.Result {
 
 func (c App) Details(query string) revel.Result {
 	if len(query) == 0 {
-		return c.Redirect(routes.App.Index())
+		return c.Redirect(App.Index)
 	}
 	if strings.Contains(query, " ") {
 		return c.Redirect(routes.App.Details(strings.Replace(query, " ", "_", -1)))
@@ -81,7 +81,7 @@ func (c App) SearchGet() revel.Result {
 	if query, ok := c.Params.Values["q"]; ok && len(query) > 0 {
 		return c.Redirect(routes.App.Details(query[0]))
 	}
-	return c.Redirect(routes.App.Index())
+	return c.Redirect(App.Index)
 }
 
 func (c App) About() revel.Result {
@@ -90,7 +90,7 @@ func (c App) About() revel.Result {
 
 func (a App) SavePhrase(phrase string) revel.Result {
 	if len(phrase) == 0 || a.connected() == nil {
-		return a.Redirect(routes.App.Index())
+		return a.Redirect(App.Index)
 	}
 	user := a.connected()
 	user.Words = append(user.Words, phrase)
@@ -152,7 +152,7 @@ func (c App) SaveUser(user models.User) revel.Result {
 	if c.Validation.HasErrors() {
 		c.Validation.Keep()
 		c.FlashParams()
-		return c.Redirect(routes.App.Register())
+		return c.Redirect(App.Register)
 	}
 
 	collection := c.MongoSession.DB("greenbook").C("users")
@@ -160,7 +160,7 @@ func (c App) SaveUser(user models.User) revel.Result {
 
 	c.Session["email"] = user.Email
 	c.Flash.Success("Welcome, " + user.Email)
-	return c.Redirect(routes.App.Index())
+	return c.Redirect(App.Index)
 }
 
 func (c App) getUser(email string) *models.User {
@@ -177,20 +177,20 @@ func (c App) Login(email, password string) revel.Result {
 		if err == nil {
 			c.Session["email"] = email
 			c.Flash.Success("Welcome, " + email)
-			return c.Redirect(routes.App.Index())
+			return c.Redirect(App.Index)
 		}
 	}
 
 	c.Flash.Out["email"] = email
 	c.Flash.Error("Login failed")
-	return c.Redirect(routes.App.Index())
+	return c.Redirect(App.Index)
 }
 
 func (c App) Logout() revel.Result {
 	for k := range c.Session {
 		delete(c.Session, k)
 	}
-	return c.Redirect(routes.App.Index())
+	return c.Redirect(App.Index)
 }
 
 func (c App) Index() revel.Result {
