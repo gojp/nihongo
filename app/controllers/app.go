@@ -106,7 +106,7 @@ func (a App) SavePhrase(phrase string) revel.Result {
 	return a.RenderJson(bson.M{"result": "ok"})
 }
 
-func addUser(collection *mgo.Collection, email, password string) {
+func addUser(collection *mgo.Collection, email, password string) error {
 	index := mgo.Index{
 		Key:        []string{"email"},
 		Unique:     true,
@@ -126,8 +126,10 @@ func addUser(collection *mgo.Collection, email, password string) {
 	err = collection.Insert(&models.User{Email: email, Password: string(bcryptPassword)})
 
 	if err != nil {
-		log.Panic(err)
+		return err
 	}
+
+	return nil
 }
 
 func (c App) Register() revel.Result {
@@ -156,7 +158,18 @@ func (c App) SaveUser(user models.User) revel.Result {
 	}
 
 	collection := c.MongoSession.DB("greenbook").C("users")
-	addUser(collection, user.Email, user.Password)
+	err := addUser(collection, user.Email, user.Password)
+
+	if err != nil {
+		if mgo.IsDup(err) {
+			c.Flash.Error("We're sorry, but a user with this email address already exists.")
+			return c.Redirect(App.Register)
+		} else {
+			c.Flash.Error("We're sorry, but we are experiencing difficulties adding users to the system. Please try again later.")
+			log.Println("ERROR: could not add user: ", err)
+			return c.Redirect(App.Register)
+		}
+	}
 
 	c.Session["email"] = user.Email
 	c.Flash.Success("Welcome, " + user.Email)
