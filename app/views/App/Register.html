@@ -17,6 +17,15 @@
           <div class="col-md-6 col-md-offset-3">
              <h1>Sign up</h1>
              <p>(being a nihongo.io user means no ads, and that we love you)</p>
+             {{if .flash.error}} 
+             <div class="row-fluid">
+               <div class="span12 text-center">
+                 <p class="text-error">
+                   <strong>{{.flash.error}}</strong>
+                 </p>
+               </div>
+             </div>
+             {{end}}
              <form action="{{url "App.SaveUser"}}" method="POST">
                {{with $field := field "user.Email" .}}
                  <p class="{{$field.ErrorClass}}">
