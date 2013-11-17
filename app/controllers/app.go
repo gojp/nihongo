@@ -165,8 +165,8 @@ func (c App) SaveUser(user models.User) revel.Result {
 			c.Flash.Error("We're sorry, but a user with this email address already exists.")
 			return c.Redirect(App.Register)
 		} else {
-			c.Flash.Error("We're sorry, but we are currently experiencing difficulties adding users to the system. Please try again later.")
-			log.Println("An error occurred when adding a user: ", err)
+			c.Flash.Error("We're sorry, but we are experiencing difficulties adding users to the system. Please try again later.")
+			log.Println("ERROR: could not add user: ", err)
 			return c.Redirect(App.Register)
 		}
 	}
