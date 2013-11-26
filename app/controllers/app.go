@@ -172,7 +172,7 @@ func (c App) SaveUser(user models.User) revel.Result {
 	}
 
 	c.Session["email"] = user.Email
-	c.Flash.Success("Welcome, " + user.Email)
+	c.Flash.Success("Thanks for joining Nihongo.io. よろしくお願いします!")
 	return c.Redirect(App.Index)
 }
 
