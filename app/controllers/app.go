@@ -88,6 +88,10 @@ func (c App) About() revel.Result {
 	return c.Render()
 }
 
+func (c App) Resources() revel.Result {
+	return c.Render()
+}
+
 func (a App) SavePhrase(phrase string) revel.Result {
 	if len(phrase) == 0 || a.connected() == nil {
 		return a.Redirect(App.Index)

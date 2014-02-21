@@ -6,6 +6,7 @@ module:testrunner
 
 GET     /                                       App.Index
 GET     /info/about                             App.About
+GET     /info/resources                         App.Resources
 GET     /search                                 App.SearchGet
 GET     /search/:query                          App.Search
 GET     /user/register                          App.Register
