@@ -3,7 +3,6 @@ from pymongo import Connection
 import rawes
 import romkan
 import json
-import subprocess
 import sys
 
 if len(sys.argv) <= 1:
@@ -34,27 +33,27 @@ elif es:
 
     print "Creating a new index..."
     mapping = {
-        "mappings" : {
-            "entry" : {
-                "properties" : {
+        "mappings": {
+            "entry": {
+                "properties": {
                     "english": {"type": "string"},
-                    "japanese" : {"type" : "string"},
-                    "furigana" : {"type" : "string"},
+                    "japanese": {"type": "string"},
+                    "furigana": {"type": "string"},
                     "romaji": {"type": "string"},
                     "glosses": {
                         "properties": {
-                            "english": {"type" : "string"},
-                            "tags": {"type" : "string"},
-                            "field": {"type" : "string"},
-                            "related": {"type" : "string"}
+                            "english": {"type": "string"},
+                            "tags": {"type": "string"},
+                            "field": {"type": "string"},
+                            "related": {"type": "string"}
                         },
                         "index name": "gloss",
                         "index": "no"
                     },
-                    "common" : {"type" : "boolean"},
-                    "ent_seq" : {"type" : "string"}
+                    "common": {"type": "boolean"},
+                    "ent_seq": {"type": "string"}
                 },
-                "_boost" : {"name" : "common_boost", "null_value" : 1.0},
+                "_boost": {"name": "common_boost", "null_value": 1.0},
             }
         }
     }
@@ -71,7 +70,7 @@ def get_inserts(max_chunk=10000):
         i += 1
         e['english'] = [g['english'] for g in e['glosses']]
         e['romaji'] = romkan.to_roma(e['furigana'])
-        e['common_boost'] = 2.0 if e['common'] == True else 1.0
+        e['common_boost'] = 2.0 if e['common'] is True else 1.0
         inserts.append(e)
         if i % max_chunk == 0:
             yield inserts
@@ -93,7 +92,6 @@ else:
     inserts = get_inserts()
     inserted_count = 0
 
-
     bulk_list = []
     for insert_chunk in get_inserts():
         for d in insert_chunk:
@@ -102,7 +100,7 @@ else:
             # before each entry
             # http://www.elasticsearch.org/guide/reference/api/bulk/
 
-            index_line = {"index": {"_index":"edict","_type": "entry", "_id": str(counter + 1)}}
+            index_line = {"index": {"_index": "edict", "_type": "entry", "_id": str(counter + 1)}}
             bulk_list.append(index_line)
             bulk_list.append(d)
             if not es:
@@ -110,7 +108,7 @@ else:
                 print json.dumps(d)
 
         if bulk_list and es:
-            bulk_body = '\n'.join(map(json.dumps, bulk_list))+'\n'
+            bulk_body = '\n'.join(map(json.dumps, bulk_list)) + '\n'
             es.post('edict/entry/_bulk', data=bulk_body)
             bulk_list = []
 
