@@ -1,6 +1,5 @@
 test-results/
 tmp/
-routes/
 *.swp
 *.pyc
 data/
