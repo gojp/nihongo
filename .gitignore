@@ -5,3 +5,4 @@ routes/
 *.pyc
 data/
 scripts/output.json	
+nihongo.log
