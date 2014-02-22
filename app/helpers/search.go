@@ -5,12 +5,24 @@ import (
 	"github.com/gojp/kana"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
+	"github.com/robfig/revel"
 	"log"
 	"strings"
 )
 
 func Search(query string) (hits [][]byte) {
-	api.Domain = "localhost"
+	elasticURL, found := revel.Config.String("elastic.url")
+	if !found {
+		// Default to 'localhost'
+		elasticURL = "localhost"
+	}
+	api.Domain = elasticURL
+
+	elasticPort, found := revel.Config.String("elastic.port")
+	if found {
+		api.Port = elasticPort
+	}
+
 	query = strings.Replace(query, "\"", "\\\"", -1)
 
 	isLatin := kana.IsLatin(query)
