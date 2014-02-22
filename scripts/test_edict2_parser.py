@@ -6,7 +6,6 @@
 
 import unittest
 import pprint
-import codecs
 from edict2_parser import Parser
 
 test_cases = {
@@ -20,6 +19,7 @@ test_cases = {
 }
 
 pp = pprint.PrettyPrinter(indent=4)
+
 
 class TestEdict2Parser(unittest.TestCase):
 

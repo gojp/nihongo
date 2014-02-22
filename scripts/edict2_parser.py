@@ -11,7 +11,9 @@
 #    KANJI-1;KANJI-2 [KANA-1;KANA-2] /(general information) (see xxxx) gloss/gloss/.../
 #    垜;安土;堋 [あずち] /(n) mound on which targets are placed (in archery)/firing mound/EntL2542010/
 
-import os, re, gzip, gettext, pprint
+import os
+import re
+import gzip
 
 # Part of speech codes
 valid_pos_codes = list(set((
@@ -21,28 +23,24 @@ valid_pos_codes = list(set((
     "pref", "prt", "suf", "v1", "v2a-s", "v4h", "v4r", "v5", "v5aru",
     "v5b", "v5g", "v5k", "v5k-s", "v5m", "v5n", "v5r", "v5r-i", "v5s",
     "v5t", "v5u", "v5u-s", "v5uru", "v5z", "vz", "vi", "vk", "vn",
-    "vr", "vs", "vs-s", "vs-i", "vt",
-    )))
+    "vr", "vs", "vs-s", "vs-i", "vt")))
 
 # Field of application codes
 valid_foa_codes = list(set((
     "Buddh", "MA", "comp", "food", "geom", "ling", "math", "mil",
-    "physics", "chem", "biol"
-    )))
+    "physics", "chem", "biol")))
 
 # Miscellaneous marking codes
 valid_misc_codes = list(set((
     "X", "abbr", "arch", "ateji", "chn", "col", "derog", "eK", "ek",
     "fam", "fem", "gikun", "hon", "hum", "iK", "id", "ik", "io",
     "m-sl", "male", "male-sl", "oK", "obs", "obsc", "ok", "on-mim",
-    "poet", "pol", "rare", "sens", "sl", "uK", "uk", "vulg", "P"
-    )))
+    "poet", "pol", "rare", "sens", "sl", "uK", "uk", "vulg", "P")))
 
 # Dialect codes
 valid_dialect_codes = list(set((
     "kyb", "osb", "ksb", "ktb", "tsb", "thb", "tsug", "kyu", "rkb",
-    "nab"
-    )))
+    "nab")))
 
 re_kana = re.compile(r'\[(.*)\]')
 re_tags = re.compile(r'\(((?:%s|[,]+)+)\:?\)' % '|'.join(valid_pos_codes + valid_misc_codes + valid_dialect_codes))
@@ -51,13 +49,14 @@ re_number_tag = re.compile(r'\((\d+)\)')
 re_any_tag = re.compile(r'\(([^)]*)\)')
 re_related_tag = re.compile(r'\(See ([^)]*)\)', re.IGNORECASE)
 
+
 class EdictGloss(object):
 
     def __init__(self, english, tags, field, related=[], common=False):
         self.english = english
         self.tags = tags
         self.field = field
-        self.related= related
+        self.related = related
 
         self.common = common
 
@@ -69,6 +68,7 @@ class EdictGloss(object):
         for f in ['english', 'tags', 'field', 'related', 'common']:
             d[f] = getattr(self, f)
         return d
+
 
 class EdictEntry(object):
 
@@ -89,15 +89,15 @@ class EdictEntry(object):
         fields = filter(lambda t: t in valid_foa_codes, self.tags)
         tags = filter(lambda t: t in valid_misc_codes, self.tags)
         dialects = filter(lambda t: t in valid_dialect_codes, self.tags)
-        furigana = self.japanese if not self.furigana else self.furigana
+        # furigana = self.japanese if not self.furigana else self.furigana
         d = {
             'japanese': self.japanese,
             'furigana': self.furigana,
             'glosses': [g.to_dict() for g in self.glosses],
-            'pos': pos, # parts of speech
-            'fields': fields, # fields of interest
-            'tags': tags, # general tags
-            'dialects': dialects, # dialects
+            'pos': pos,  # parts of speech
+            'fields': fields,  # fields of interest
+            'tags': tags,  # general tags
+            'dialects': dialects,  # dialects
             'kana_tags': self.kana_tags,
             'kanji_tags': self.kanji_tags,
             'common': 'P' in self.tags,
@@ -105,6 +105,7 @@ class EdictEntry(object):
             'has_audio': self.has_audio
         }
         return d
+
 
 class Parser(object):
 
@@ -237,7 +238,6 @@ class Parser(object):
         lines = fdata.splitlines()
         lines = [line for line in lines if line and (line[0] != u"#")]
 
-        data = {}
         entries = []
         for line in lines:
             entries += self.get_entries(line)
