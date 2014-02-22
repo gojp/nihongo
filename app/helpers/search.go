@@ -11,11 +11,7 @@ import (
 )
 
 func Search(query string) (hits [][]byte) {
-	elasticURL, found := revel.Config.String("elastic.url")
-	if !found {
-		// Default to 'localhost'
-		elasticURL = "localhost"
-	}
+	elasticURL, _ := revel.Config.String("elastic.url")
 	api.Domain = elasticURL
 
 	elasticPort, found := revel.Config.String("elastic.port")
