@@ -2,11 +2,11 @@
 
 if [ $# -eq 0 ]
   then
-      echo "output JSON from populate.py is required (./populate.py print)"
+      echo "output JSON from populate.py is required (./populate.py print > output.json then re-run this script with output.json as the argument)"
       exit 1
 fi
 
-echo "Deleting current edict index..."
+printf "Deleting current edict index...\n"
 curl -XDELETE 'http://localhost:9200/edict/'
 
 if [ -d "json" ]; then
@@ -15,13 +15,13 @@ else
   mkdir json
 fi
 
-echo "Splitting JSON output into 2000 files..."
+printf "\nSplitting JSON output into 2000 files...\n"
 cd json && split ../$1 -l 2000
 
 # Append a newline to each file
 for i in `ls`; do echo ''>>$i; done;
 
-echo "Bulk inserting into ES..."
+printf "Bulk inserting into ES...\n"
 for i in `ls`; do curl -s -XPOST "localhost:9200/_bulk" --data-binary @$i; done;
 
-echo "Done!\n"
+printf "Done!\n"

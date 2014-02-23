@@ -100,7 +100,7 @@ else:
             # before each entry
             # http://www.elasticsearch.org/guide/reference/api/bulk/
 
-            index_line = {"index": {"_index": "edict", "_type": "entry", "_id": str(counter + 1)}}
+            index_line = {"index": {"_index": "edict", "_type": "entry", "_id": str(counter)}}
             bulk_list.append(index_line)
             bulk_list.append(d)
             if not es:
