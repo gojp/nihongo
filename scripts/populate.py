@@ -59,7 +59,7 @@ elif es:
     }
     es.post('edict', data=mapping)
 
-PATH_TO_EDICT2 = '../data/edict2'
+PATH_TO_EDICT2 = 'data/edict2'
 
 
 def get_inserts(max_chunk=10000):
