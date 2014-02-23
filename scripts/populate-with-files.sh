@@ -3,6 +3,7 @@
 if [ $# -eq 0 ]
   then
       echo "output JSON from populate.py is required (./populate.py print)"
+      exit 1
 fi
 
 echo "Deleting current edict index..."
