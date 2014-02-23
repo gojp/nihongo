@@ -16,9 +16,8 @@ func Search(query string) (hits [][]byte) {
 
 	elasticPort, found := revel.Config.String("elastic.port")
 	if found {
-		api.Port = elasticPort
+		api.Port = string(elasticPort)
 	}
-	api.Port = "80"
 
 	query = strings.Replace(query, "\"", "\\\"", -1)
 
