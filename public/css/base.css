@@ -41,7 +41,7 @@ body {
 }
 
 .main-search {
-
+  border-radius: 0;
 }
 
 a, a:hover {
@@ -50,6 +50,12 @@ a, a:hover {
 
 #search {
 	text-align: center;
+  margin-bottom: 0;
+  height: 58px;
+}
+
+#search .form-group {
+  margin-bottom: 0;
 }
 
 #search input.input-lg {
@@ -65,16 +71,14 @@ a, a:hover {
   padding: 10px;
 }
 .word {
-	margin-top: 20px;
+	margin: 0;
   font-size: 20px;
   padding: 10px;
+  border-bottom: 1px solid #c6c6c6;
 }
 .word:hover {
   background: #D8E9F4 !important;
   cursor: pointer;
-}
-.word:nth-child(2n) {
-  background: #f3f3f3;
 }
 .word .common {
   width: 70px;
@@ -87,13 +91,22 @@ a, a:hover {
   font-size: 18px;
   line-height: 24px;
   padding: 3px 0;
-  float: right;
   width: 40%;
   text-align: left;
+  color: #818181;
 }
 .word .definition {
+  list-style-type: none;
 	color: #444;
   font-size: 16px;
+  padding: 0;
+}
+.word .definition .gloss {
+  display: inline-block;
+  margin-right: 10px;
+}
+.word .definition .gloss .number {
+  font-weight: bold;
 }
 .word .label-common {
   font-size: 10px;

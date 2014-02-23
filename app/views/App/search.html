@@ -1,42 +1,42 @@
-<table class="results-table">
+<div class="results-table">
 {{$user := .user}}
 {{range .wordList}}
   {{$entry := .}}
-  <tr class="word">
-    <td class="title">
+  <div class="word">
+    <div class="title">
       <a class="main-entry" href="/{{$entry.Japanese}}">{{html $entry.JapaneseHL}}</a>
-      {{if $entry.Common}}
+      <!-- {{if $entry.Common}}
       <div class="label label-success label-common">common</div>
-      {{end}}
+      {{end}} -->
       <span class="reading">
         {{if eq $entry.Furigana $entry.Japanese}}
         {{else}}
         <a class="furigana-entry" href="/{{$entry.Furigana}}">{{html $entry.FuriganaHL}}</a>
         {{end}}
       </span>
-    </td>
-    <td class="definition">
+    </div>
+    <ul class="definition">
       {{range $i, $gloss := $entry.EnglishHL}}
-        <div class="gloss">
-          {{add $i 1}}. 
+        <li class="gloss">
+          <span class="number">{{add $i 1}}</span> 
           {{range $u, $glossWord := $gloss}}
             {{if $u}} / {{end}}
             <a class="english-entry" href="/{{clean $glossWord}}">{{html $glossWord}}</a>
           {{end}}
-        </div>
+        </li>
       {{end}}
-    </td>
+    </ul>
 
     {{if $user}}
-    <td class="save">
+    <div class="save">
       {{if contains $entry.Japanese $user.Words}}
       <span>Saved</span>
       {{else}}
       <a class="btn btn-save" data-value="{{ $entry.Japanese }}" data-action="save" href="#">Save</a>
       {{end}}
-    </td>
+    <div>
     {{end}}
   </div>
-  </tr>
+  </div>
 {{end}}
-</table>
+</div>
