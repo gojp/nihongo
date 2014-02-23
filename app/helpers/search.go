@@ -18,6 +18,7 @@ func Search(query string) (hits [][]byte) {
 	if found {
 		api.Port = elasticPort
 	}
+	api.Port = "80"
 
 	query = strings.Replace(query, "\"", "\\\"", -1)
 
