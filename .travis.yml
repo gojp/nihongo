@@ -1,4 +1,3 @@
----
 language: go
 go:
 - 1.1
@@ -25,3 +24,10 @@ env:
       M88BCz2T2kwfIEQlS6vlrvcOWXCi8piPpiWHD0j2Xgv+4dKBAlfVQGoOcjij
 
       mq2lF8Hf3B/jPy8jot5au57QZhUOQln1Eb4SW9d5O87ikzFA97k='
+deploy:
+  provider: heroku
+  api_key:
+    secure: PvvBdy5IgzvXDGrSo1A4iyNvBpaiRbaJfT+RbnSx71qLXIJwksYR7ygra+z3MC8RaOtdwAbl+RXZCXLcF9wWiaofr36SoHvKr4X2neW2TLzxCmyw/d0zzb6zUBJF6xddhW0PIJpZ84xeGtpto3ND3N8UnssLRm3Dxzfsuaog/Fw=
+  app: nihongo-io
+  on:
+    repo: gojp/nihongo
