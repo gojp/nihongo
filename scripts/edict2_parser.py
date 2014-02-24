@@ -246,6 +246,6 @@ class Parser(object):
             yield e.to_dict()
 
 if __name__ == '__main__':
-    parser = Parser('../data/edict2')
+    parser = Parser('data/edict2')
     for e in parser.parse():
         print e
