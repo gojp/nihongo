@@ -12,7 +12,8 @@ func MakeStrong(query string) string {
 // convert the query to hiragana and katakana. if it's already in
 // hiragana or katakana, it will just be the same.
 func ConvertQueryToKana(query string) (hiragana, katakana string) {
-	h := kana.RomajiToHiragana(query)
-	k := kana.RomajiToKatakana(query)
+	r := kana.NormalizeRomaji(query)
+	h := kana.RomajiToHiragana(r)
+	k := kana.RomajiToKatakana(r)
 	return h, k
 }
