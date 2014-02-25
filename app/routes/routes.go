@@ -40,6 +40,13 @@ func (_ tApp) About(
 	return revel.MainRouter.Reverse("App.About", args).Url
 }
 
+func (_ tApp) Resources(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("App.Resources", args).Url
+}
+
 func (_ tApp) SavePhrase(
 		phrase string,
 		) string {
