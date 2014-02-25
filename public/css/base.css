@@ -207,7 +207,7 @@ input.shake-invalid {
 
 
 /* --- Resources page --- */
-.page.resources {
+.resource-list p {
   text-align: justify;
   font-size: 20px;
   line-height: 1.6em;
