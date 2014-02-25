@@ -206,6 +206,13 @@ input.shake-invalid {
 }
 
 
+/* --- Resources page --- */
+.page.resources .resource {
+  text-align: justify;
+  font-size: 20px;
+  line-height: 1.6em;
+}
+
 /* --- Animations --- */
 
 /* shake like in OS X */
