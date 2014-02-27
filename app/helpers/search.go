@@ -2,12 +2,13 @@ package helpers
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/gojp/kana"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
 	"github.com/robfig/revel"
-	"log"
-	"strings"
 )
 
 func Search(query string) (hits [][]byte) {
