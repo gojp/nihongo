@@ -1,8 +1,8 @@
 package tests
 
 import (
-	. "launchpad.net/gocheck"
 	"testing"
+	. "launchpad.net/gocheck"
 )
 
 // Hook up gocheck into the "go test" runner.

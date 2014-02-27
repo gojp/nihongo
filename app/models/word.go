@@ -1,9 +1,10 @@
 package models
 
 import (
-	"github.com/gojp/nihongo/app/helpers"
 	"regexp"
 	"strings"
+
+	"github.com/gojp/nihongo/app/helpers"
 )
 
 type Word struct {
