@@ -221,7 +221,7 @@ func (c App) Index() revel.Result {
 	// iter.All(&termList)
 
 	termList := []PopularSearch{
-		PopularSearch{"今日は"},
+		PopularSearch{"こんにちは"},
 		PopularSearch{"kanji"},
 		PopularSearch{"amazing"},
 		PopularSearch{"かんじ"},
