@@ -100,6 +100,10 @@ func (c App) About() revel.Result {
 	return c.Render()
 }
 
+func (c App) Resources() revel.Result {
+	return c.Render()
+}
+
 func (a App) SavePhrase(phrase string) revel.Result {
 	if len(phrase) == 0 || a.connected() == nil {
 		return a.Redirect(App.Index)
@@ -229,7 +233,7 @@ func (c App) Index() revel.Result {
 	// iter.All(&termList)
 
 	termList := []PopularSearch{
-		PopularSearch{"今日は"},
+		PopularSearch{"こんにちは"},
 		PopularSearch{"kanji"},
 		PopularSearch{"amazing"},
 		PopularSearch{"かんじ"},

@@ -1,6 +1,6 @@
 language: go
 go:
-- 1.1
+- 1.2
 services:
 - elasticsearch
 before_install:
@@ -8,10 +8,6 @@ before_install:
 install:
 - export PATH=$PATH:$HOME/gopath/bin
 - go get -v github.com/robfig/revel/revel
-- go get launchpad.net/gocheck
-- go get github.com/gojp/kana
-- go get github.com/mattbaird/elastigo
-- go get github.com/araddon/gou
 script:
 - revel test github.com/gojp/nihongo dev HelpersTest
 - python scripts/test_edict2_parser.py
@@ -31,3 +27,4 @@ deploy:
   app: nihongo-io
   on:
     repo: gojp/nihongo
+  strategy: git
