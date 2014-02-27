@@ -9,18 +9,18 @@
     {{if not .title }}{{set . "title" "Nihongo.io Japanese English Dictionary" }}{{end}}
     {{if not .description }}{{set . "description" "The free online Japanese dictionary" }}{{end}}
 
-    <!-- Real HTML tags --> 
+    <!-- Real HTML tags -->
     <title>{{.title}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="{{.description}}">
 
-    <!-- Facebook open graph --> 
+    <!-- Facebook open graph -->
     <meta property="og:site_name" content="Nihongo.io"/>
     <meta property="og:type" content="article"/>
     <meta property="og:title" content="{{.title}}"/>
     <meta property="og:description" content="{{.description}}"/>
 
-    <!-- Twitter description --> 
+    <!-- Twitter description -->
     <meta name="twitter:card" content="summary"/>
     <meta name="twitter:title" content="{{.title}}"/>
     <meta name="twitter:description" content="{{.description}}"/>
