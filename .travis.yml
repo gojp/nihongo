@@ -27,3 +27,4 @@ deploy:
   app: nihongo-io
   on:
     repo: gojp/nihongo
+  strategy: git
