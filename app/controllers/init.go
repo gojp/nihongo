@@ -24,5 +24,13 @@ func init() {
 		}
 		return false
 	}
+
+	revel.TemplateFuncs["domain"] = func() string {
+		domain, found := revel.Config.String("domain")
+		if found {
+			return domain
+		}
+		return ""
+	}
 	revmgo.ControllerInit()
 }
