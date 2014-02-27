@@ -49,7 +49,7 @@ a, a:hover {
 }
 
 #search {
-	text-align: center;
+  text-align: center;
 }
 
 #search input.input-lg {
@@ -65,7 +65,7 @@ a, a:hover {
   padding: 10px;
 }
 .word {
-	margin-top: 20px;
+  margin-top: 20px;
   font-size: 20px;
   padding: 10px;
 }
@@ -80,7 +80,7 @@ a, a:hover {
   width: 70px;
 }
 .word .title {
-	font-weight: normal;
+  font-weight: normal;
   font-size: 24px;
 }
 .word .reading {
@@ -92,7 +92,7 @@ a, a:hover {
   text-align: left;
 }
 .word .definition {
-	color: #444;
+  color: #444;
   font-size: 16px;
 }
 .word .label-common {

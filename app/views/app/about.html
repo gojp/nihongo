@@ -54,7 +54,7 @@ $(document).ready( function () {
         // validate_input() is a validation function I wrote, you'll have to substitute this with your own.
         if ( validate_input($form) ) {
           $form.find('input').removeClass('shake-invalid');
-          register($form); 
+          register($form);
         } else {
           $form.find('.control-group').addClass('has-error')
           var $input = $form.find('.control-group').find('input');
@@ -70,7 +70,7 @@ function validate_email(email) {
 
 function validate_input($form) {
   var $email = $form.find('[name="EMAIL"]');
-  return validate_email($email.val()) ? true : false;  
+  return validate_email($email.val()) ? true : false;
 }
 
 function showMessage(title, text) {
