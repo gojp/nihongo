@@ -5,15 +5,28 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="google" value="notranslate" />
     <meta http-equiv="Content-Language" content="en_US" />
-    <title>{{if .title }}{{ .title }} | {{end}}Nihongo.io Japanese English Dictionary</title>
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+    {{if not .title }}{{set . "title" "Nihongo.io Japanese English Dictionary" }}{{end}}
+    {{if not .description }}{{set . "description" "The free online Japanese dictionary" }}{{end}}
+
+    <!-- Real HTML tags --> 
+    <title>{{.title}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="description" content="{{.description}}">
+
+    <!-- Facebook open graph --> 
+    <meta property="og:site_name" content="Nihongo.io"/>
+    <meta property="og:type" content="Dictionary"/>
+    <meta property="og:title" content="{{.title}}"/>
+    <meta property="og:description" content="{{.description}}"/>
+
+    <!-- Twitter description --> 
+    <meta name="twitter:title" content="{{.title}}">
+    <meta name="twitter:description" content="{{.description}}">
+
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/public/css/base.css">
-    <!--[if !IE 7]>
-	<style type="text/css">
-		#wrap {display:table;height:100%}
-	</style>
-	<![endif]-->
+
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-44108711-1']);
@@ -24,10 +37,5 @@
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-
     </script>
-
-    <meta property="og:site_name" content="Nihongo.io"/>
-    <meta property="og:type" content="Dictionary"/>
-    <meta property="og:title" content="{{if .title }}{{ .title }}{{else}}Nihongo.io Japanese English Dictionary{{end}}"/>
 </head>
