@@ -1,9 +1,12 @@
 package controllers
 
 import (
-	"code.google.com/p/go.crypto/bcrypt"
 	"encoding/json"
 	"fmt"
+	"log"
+	"strings"
+
+	"code.google.com/p/go.crypto/bcrypt"
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
@@ -11,8 +14,6 @@ import (
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
-	"log"
-	"strings"
 )
 
 type App struct {

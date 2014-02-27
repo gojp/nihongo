@@ -3,6 +3,7 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/robfig/revel"

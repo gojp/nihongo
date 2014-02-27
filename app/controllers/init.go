@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/jgraham909/revmgo"
-	"github.com/robfig/revel"
 	"html/template"
 	"strings"
+
+	"github.com/jgraham909/revmgo"
+	"github.com/robfig/revel"
 )
 
 func init() {
