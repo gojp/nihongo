@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/jgraham909/revmgo"
-	"github.com/robfig/revel"
 	"html/template"
 	"strings"
+
+	"github.com/jgraham909/revmgo"
+	"github.com/robfig/revel"
 )
 
 func init() {
@@ -23,6 +24,14 @@ func init() {
 			}
 		}
 		return false
+	}
+
+	revel.TemplateFuncs["domain"] = func() string {
+		domain, found := revel.Config.String("domain")
+		if found {
+			return domain
+		}
+		return ""
 	}
 	revmgo.ControllerInit()
 }

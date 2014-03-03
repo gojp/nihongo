@@ -1,8 +1,12 @@
 package controllers
 
 import (
-	"code.google.com/p/go.crypto/bcrypt"
 	"encoding/json"
+	"fmt"
+	"log"
+	"strings"
+
+	"code.google.com/p/go.crypto/bcrypt"
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
@@ -10,8 +14,6 @@ import (
 	"github.com/robfig/revel"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
-	"log"
-	"strings"
 )
 
 type App struct {
@@ -73,8 +75,19 @@ func (c App) Details(query string) revel.Result {
 	wordList := getWordList(hits, query)
 	pageTitle := query + " in Japanese"
 
+	description := ""
+	if len(wordList) > 0 {
+		w := wordList[0].Word
+		if w.Japanese != w.Furigana {
+			description += fmt.Sprintf("%s [%s] - ", w.Japanese, w.Furigana)
+		} else {
+			description += fmt.Sprintf("%s - ", w.Japanese)
+		}
+		description += strings.Join(w.English, ", ")
+	}
+
 	user := c.connected()
-	return c.Render(wordList, query, pageTitle, user)
+	return c.Render(wordList, query, pageTitle, user, description)
 }
 
 func (c App) SearchGet() revel.Result {

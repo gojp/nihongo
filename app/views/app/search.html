@@ -18,7 +18,7 @@
     <td class="definition">
       {{range $i, $gloss := $entry.EnglishHL}}
         <div class="gloss">
-          {{add $i 1}}. 
+          {{add $i 1}}.
           {{range $u, $glossWord := $gloss}}
             {{if $u}} / {{end}}
             <a class="english-entry" href="/{{clean $glossWord}}">{{html $glossWord}}</a>
