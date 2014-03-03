@@ -70,7 +70,7 @@ a, a:hover {
   padding: 10px;
 }
 .word:hover {
-  background: #D8E9F4 !important;
+  background: #dbeff4 !important;
   cursor: pointer;
 }
 .word:nth-child(2n) {
@@ -96,9 +96,10 @@ a, a:hover {
   font-size: 16px;
 }
 .word .label-common {
-  font-size: 10px;
-  background: #0089A7;
+  font-size: 12px;
+  background: #6bc1d4;
   font-weight: normal;
+  border-radius: 0px;
 }
 .word a {
   color: inherit;
@@ -109,7 +110,7 @@ a, a:hover {
 }
 .word strong {
   padding: 2px 0px;
-  background: #A8CCDB;
+  background: #b6dfe9;
   font-weight: normal;
 }
 
@@ -271,4 +272,51 @@ input.shake-invalid {
     0%, 100% {
         transform: translateX(0);
     }
+}
+
+
+/* Loading bar styles */
+#loadingbar {
+  position: fixed;
+  z-index: 2147483647;
+  top: 0;
+  left: -6px;
+  width: 1%;
+  height: 10px;
+  background: #b6dfe9;
+  -moz-border-radius: 1px;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+  -moz-transition: all 200ms ease-in-out;
+  -ms-transition: all 200ms ease-in-out;
+  -o-transition: all 200ms ease-in-out;
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+}
+
+@keyframes pulse {
+  30% { opacity:0.6; }
+  60% { opacity:0; }
+  100% { opacity:0.6; }
+}
+
+@-moz-keyframes pulse 
+{
+  30% { opacity:0.6; }
+  60% { opacity:0; }
+  100% { opacity:0.6; }
+}
+
+@-ms-keyframes pulse 
+{
+  30% { opacity:0.6; }
+  60% { opacity:0; }
+  100% { opacity:0.6; }
+}
+
+@-webkit-keyframes pulse 
+{
+  30% { opacity:0.6; }
+  60% { opacity:0; }
+  100% { opacity:0.6; }
 }
