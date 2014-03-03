@@ -5,7 +5,18 @@ $(function(){
   var search = function(term){
     $('.row.logo').hide();
     $.get('/search/' + term, {
-      data: {}
+      data: {},
+      beforeSend: function() {
+        if ($("#loadingbar").length === 0) {
+          $("body").append("<div id='loadingbar'></div>")
+          $("#loadingbar").addClass("waiting");
+          $("#loadingbar").width((50 + Math.random() * 30) + "%");
+        }
+      }
+    }).always(function() {
+      $("#loadingbar").width("101%").delay(100).fadeOut(100, function() {
+        $(this).remove();
+      });
     }).success(function(response){
       $("#results").html(response);
     });
