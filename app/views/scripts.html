@@ -1,53 +1,68 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-$(function(){
-	var search = function(term){
-		$('.row.logo').hide();
-		$.get('/search/' + term, {
-			data: {}
-		}).success(function(response){
-			$("#results").html(response);
-		});
-		if (_gaq) {
-			_gaq.push(['_trackPageview', '/' + term]);
-		}
-	};
-	var typeTimeout = null,
-		lastSearch = null;
-	$(".main-search").focus().on("keyup blur", function(e){
-		var val = $(this).val();
-		if (typeTimeout){
-			clearTimeout(typeTimeout);
-		}
-		typeTimeout = setTimeout(function(){
-			return (function(v){
-				if (v.length && v != lastSearch) {
-					lastSearch = v;
-					search(v);
-				}
-			}(val));
-		}, 200);
-	});
-	$(".header .title").on('click', function(){
-		$('.main-search').focus();
-		return false;
-	});
-	$('.results-table .word').on('click', function(){
-		window.location.href = $(this).find('a.main-entry').attr('href');
-	});
 
-	$('[data-action="save"]').on('click', function(e){
-		var term = $(this).attr('data-value');
-		$.ajax('/save/' + term, {
-			type: 'post',
-			context: {'target': this},
-			dataType: 'json',
-			success: function(){
-				$(this.target).replaceWith('<span>Saved!</span>');
-			}
-		});
-		return false;
-	});
+    
+
+
+$(function(){
+  var search = function(term){
+    $('.row.logo').hide();
+    $.get('/search/' + term, {
+      data: {},
+      beforeSend: function() {
+        if ($("#loadingbar").length === 0) {
+          $("body").append("<div id='loadingbar'></div>")
+          $("#loadingbar").addClass("waiting");
+          $("#loadingbar").width((50 + Math.random() * 30) + "%");
+        }
+      }
+    }).always(function() {
+      $("#loadingbar").width("101%").delay(100).fadeOut(100, function() {
+        $(this).remove();
+      });
+    }).success(function(response){
+      $("#results").html(response);
+    });
+    if (_gaq) {
+      _gaq.push(['_trackPageview', '/' + term]);
+    }
+  };
+  var typeTimeout = null,
+    lastSearch = null;
+  $(".main-search").focus().on("keyup blur", function(e){
+    var val = $(this).val();
+    if (typeTimeout){
+      clearTimeout(typeTimeout);
+    }
+    typeTimeout = setTimeout(function(){
+      return (function(v){
+        if (v.length && v != lastSearch) {
+          lastSearch = v;
+          search(v);
+        }
+      }(val));
+    }, 200);
+  });
+  $(".header .title").on('click', function(){
+    $('.main-search').focus();
+    return false;
+  });
+  $('.results-table .word').on('click', function(){
+    window.location.href = $(this).find('a.main-entry').attr('href');
+  });
+
+  $('[data-action="save"]').on('click', function(e){
+    var term = $(this).attr('data-value');
+    $.ajax('/save/' + term, {
+      type: 'post',
+      context: {'target': this},
+      dataType: 'json',
+      success: function(){
+        $(this.target).replaceWith('<span>Saved!</span>');
+      }
+    });
+    return false;
+  });
 });
 </script>
