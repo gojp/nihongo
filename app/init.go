@@ -1,11 +1,20 @@
 package app
 
 import (
+	"fmt"
+	"log"
+
+	"github.com/gojp/nihongo/app/helpers"
 	"github.com/jgraham909/revmgo"
 	"github.com/robfig/revel"
 )
 
 func init() {
+	radMap, err := helpers.LoadRadMap()
+	if err != nil {
+		log.Println("Error loading radical map: %s", err.Error())
+	}
+	fmt.Println(radMap)
 	// Filters is the default set of global filters.
 	revel.Filters = []revel.Filter{
 		revel.PanicFilter,             // Recover from panics and display an error page instead.
