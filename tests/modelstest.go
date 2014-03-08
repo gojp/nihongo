@@ -2,7 +2,7 @@ package tests
 
 import (
 	"github.com/gojp/nihongo/app/models"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 )
 
 type ModelsTest struct {

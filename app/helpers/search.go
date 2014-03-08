@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -8,7 +9,7 @@ import (
 	"github.com/gojp/kana"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 )
 
 func Search(query string) (hits [][]byte) {
@@ -104,13 +105,19 @@ func Search(query string) (hits [][]byte) {
 			}
 		}`)
 
-	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
+	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
 	if err != nil {
 		log.Println(err)
 	}
 
 	for _, hit := range out.Hits.Hits {
-		hits = append(hits, hit.Source)
+		var h interface{}
+		h, err = json.Marshal(&hit.Source)
+		if err != nil {
+			log.Println(err)
+		}
+
+		hits = append(hits, h.([]byte))
 	}
 	return hits
 }
