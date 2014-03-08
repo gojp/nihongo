@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -104,13 +105,19 @@ func Search(query string) (hits [][]byte) {
 			}
 		}`)
 
-	out, err := core.SearchRequest(true, "edict", "entry", searchJson, "", 0)
+	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
 	if err != nil {
 		log.Println(err)
 	}
 
 	for _, hit := range out.Hits.Hits {
-		hits = append(hits, hit.Source)
+		var h interface{}
+		h, err = json.Marshal(&hit.Source)
+		if err != nil {
+			log.Println(err)
+		}
+
+		hits = append(hits, h.([]byte))
 	}
 	return hits
 }
