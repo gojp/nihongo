@@ -57,12 +57,20 @@ func (a App) Search(query string) revel.Result {
 	if len(query) == 0 {
 		return a.Redirect(App.Index)
 	}
-	hits := helpers.Search(query)
+	hits, err := helpers.Search(query)
+
+	if err != nil {
+		log.Println(err)
+	}
+
 	fuzzy := false
 
 	if len(hits) == 0 {
 		// no hits, so we make suggestions ("did you mean...")
-		hits = helpers.FuzzySearch(query)
+		hits, err = helpers.FuzzySearch(query)
+		if err != nil {
+			log.Println(err)
+		}
 		fuzzy = true
 	}
 	wordList := getWordList(hits, query)
@@ -79,12 +87,18 @@ func (c App) Details(query string) revel.Result {
 	}
 
 	query = strings.Replace(query, "_", " ", -1)
-	hits := helpers.Search(query)
+	hits, err := helpers.Search(query)
+	if err != nil {
+		log.Println(err)
+	}
 	fuzzy := false
 
 	if len(hits) == 0 {
 		// no hits, so we make suggestions ("did you mean...")
-		hits = helpers.FuzzySearch(query)
+		hits, err = helpers.FuzzySearch(query)
+		if err != nil {
+			log.Println(err)
+		}
 		fuzzy = true
 	}
 

@@ -3,7 +3,6 @@ package helpers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/gojp/kana"
@@ -22,7 +21,7 @@ func initElasticConnection() {
 	}
 }
 
-func Search(query string) (hits [][]byte) {
+func Search(query string) (hits [][]byte, err error) {
 	initElasticConnection()
 
 	query = strings.Replace(query, "\"", "\\\"", -1)
@@ -111,24 +110,24 @@ func Search(query string) (hits [][]byte) {
 
 	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
 	if err != nil {
-		log.Println(err)
+		return hits, err
 	}
 
 	for _, hit := range out.Hits.Hits {
 		var h interface{}
 		h, err = json.Marshal(&hit.Source)
 		if err != nil {
-			log.Println(err)
+			return hits, err
 		}
 
 		hits = append(hits, h.([]byte))
 	}
-	return hits
+	return hits, nil
 }
 
 // FuzzySearch returns words similar to the search terms
 // provided, and not just exact matches.
-func FuzzySearch(query string) (hits [][]byte) {
+func FuzzySearch(query string) (hits [][]byte, err error) {
 	initElasticConnection()
 
 	searchJson := fmt.Sprintf(`
@@ -144,17 +143,17 @@ func FuzzySearch(query string) (hits [][]byte) {
 
 	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
 	if err != nil {
-		log.Println(err)
+		return hits, err
 	}
 
 	for _, hit := range out.Hits.Hits {
 		var h interface{}
 		h, err = json.Marshal(&hit.Source)
 		if err != nil {
-			log.Println(err)
+			return hits, err
 		}
 
 		hits = append(hits, h.([]byte))
 	}
-	return hits
+	return hits, nil
 }
