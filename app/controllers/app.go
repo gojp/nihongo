@@ -11,7 +11,7 @@ import (
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
 	"github.com/jgraham909/revmgo"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )

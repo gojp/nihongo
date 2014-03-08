@@ -9,7 +9,7 @@ import (
 	"github.com/gojp/kana"
 	"github.com/mattbaird/elastigo/api"
 	"github.com/mattbaird/elastigo/core"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 )
 
 func Search(query string) (hits [][]byte) {

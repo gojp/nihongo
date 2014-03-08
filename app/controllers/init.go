@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/jgraham909/revmgo"
-	"github.com/robfig/revel"
+	"github.com/revel/revel"
 )
 
 func init() {
