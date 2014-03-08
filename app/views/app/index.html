@@ -1,33 +1,14 @@
 {{template "header.html" .}}
 
 <body>
-
+{{template "app/search_bar.html"}}
 <div id="wrap">
   <div id="main">
     <div class="container">
       <div id="page" class="page">
         <div class="row">
-          <div class="col-md-8 col-md-offset-2">
-            <form class="form-horizontal" id="search" method="get" action="/search">
-              <div class="form-group">
-                <div class="col-lg-12">
-                  <input class="main-search input-lg form-control" type="search" name="q" placeholder="Type Japanese, 漢字, かな, romaji or English to search" autocomplete="off" />
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-8 col-md-offset-2">
-            <div id="results">
-            </div>
-          </div>
-        </div>
-        <div class="row logo">
-          <div class="col-md-6 col-md-offset-3 header">
-            <div class="title">
-              <a href="/"><img src="/public/images/nihongo.png" alt="nihongo.io" title="nihongo.io"></a>
-            </div>
+          <div class="col-md-12">
+            <div id="results"></div>
           </div>
         </div>
       </div>
