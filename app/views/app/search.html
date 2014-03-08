@@ -1,3 +1,6 @@
+{{if .fuzzy}}
+<div class="alert-fuzzy alert-info">We couldn't find anything that matched <strong>{{.query}}</strong>. Did you mean one of these?</div>
+{{end}}
 <table class="results-table">
 {{$user := .user}}
 {{range .wordList}}

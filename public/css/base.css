@@ -37,7 +37,7 @@ body {
 }
 
 #page {
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .main-search {
@@ -61,7 +61,7 @@ a, a:hover {
 }
 
 .search-form {
-    height: 58px;
+    height: 66px;
     margin: 10px auto 0;
 }
 
@@ -104,6 +104,9 @@ a, a:hover {
   .search-form.centered .logo {
     display: none;
   }
+}
+.alert-fuzzy {
+  padding: 10px;
 }
 .results-table {
   table-layout:fixed;

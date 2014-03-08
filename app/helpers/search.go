@@ -12,7 +12,7 @@ import (
 	"github.com/revel/revel"
 )
 
-func Search(query string) (hits [][]byte) {
+func initElasticConnection() {
 	elasticURL, _ := revel.Config.String("elastic.url")
 	api.Domain = elasticURL
 
@@ -20,6 +20,10 @@ func Search(query string) (hits [][]byte) {
 	if found {
 		api.Port = string(elasticPort)
 	}
+}
+
+func Search(query string) (hits [][]byte) {
+	initElasticConnection()
 
 	query = strings.Replace(query, "\"", "\\\"", -1)
 
@@ -104,6 +108,39 @@ func Search(query string) (hits [][]byte) {
 				}
 			}
 		}`)
+
+	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, hit := range out.Hits.Hits {
+		var h interface{}
+		h, err = json.Marshal(&hit.Source)
+		if err != nil {
+			log.Println(err)
+		}
+
+		hits = append(hits, h.([]byte))
+	}
+	return hits
+}
+
+// FuzzySearch returns words similar to the search terms
+// provided, and not just exact matches.
+func FuzzySearch(query string) (hits [][]byte) {
+	initElasticConnection()
+
+	searchJson := fmt.Sprintf(`
+		{"query":
+			{"fuzzy_like_this":
+				{
+				"fields" : ["romaji", "english"],
+				"like_text" : "%s",
+				"max_query_terms" : 12
+				}
+			}
+		}`, query)
 
 	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
 	if err != nil {
