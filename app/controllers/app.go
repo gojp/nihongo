@@ -58,8 +58,16 @@ func (a App) Search(query string) revel.Result {
 		return a.Redirect(App.Index)
 	}
 	hits := helpers.Search(query)
+	fuzzy := false
+
+	if len(hits) == 0 {
+		// no hits, so we make suggestions ("did you mean...")
+		hits = helpers.FuzzySearch(query)
+		fuzzy = true
+	}
 	wordList := getWordList(hits, query)
-	return a.Render(wordList)
+
+	return a.Render(wordList, fuzzy, query)
 }
 
 func (c App) Details(query string) revel.Result {
@@ -72,6 +80,14 @@ func (c App) Details(query string) revel.Result {
 
 	query = strings.Replace(query, "_", " ", -1)
 	hits := helpers.Search(query)
+	fuzzy := false
+
+	if len(hits) == 0 {
+		// no hits, so we make suggestions ("did you mean...")
+		hits = helpers.FuzzySearch(query)
+		fuzzy = true
+	}
+
 	wordList := getWordList(hits, query)
 	pageTitle := query + " in Japanese"
 
@@ -87,7 +103,7 @@ func (c App) Details(query string) revel.Result {
 	}
 
 	user := c.connected()
-	return c.Render(wordList, query, pageTitle, user, description)
+	return c.Render(wordList, query, pageTitle, user, description, fuzzy)
 }
 
 func (c App) SearchGet() revel.Result {
