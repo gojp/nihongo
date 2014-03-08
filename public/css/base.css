@@ -52,7 +52,7 @@ a, a:hover {
   text-align: center;
 }
 
-#search input[type="search"].input-lg {
+#search input[type="text"].input-lg {
   height: 58px;
   margin: 0;
   border-radius: 0;
@@ -62,7 +62,6 @@ a, a:hover {
 
 .search-form {
     height: 58px;
-    background-color: #b6dfe9;
     margin: 10px auto 0;
 }
 
