@@ -67,9 +67,7 @@ func (a App) Search(query string) revel.Result {
 	}
 	wordList := getWordList(hits, query)
 
-	foundSomething := len(wordList)
-
-	return a.Render(wordList, fuzzy, foundSomething, query)
+	return a.Render(wordList, fuzzy, query)
 }
 
 func (c App) Details(query string) revel.Result {
@@ -104,9 +102,8 @@ func (c App) Details(query string) revel.Result {
 		description += strings.Join(w.English, ", ")
 	}
 
-	foundSomething := len(wordList)
 	user := c.connected()
-	return c.Render(wordList, query, pageTitle, user, description, fuzzy, foundSomething)
+	return c.Render(wordList, query, pageTitle, user, description, fuzzy)
 }
 
 func (c App) SearchGet() revel.Result {
