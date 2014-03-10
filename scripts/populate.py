@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from edict2_parser import Parser
 from pymongo import Connection
 import rawes
@@ -25,8 +27,7 @@ elif es:
     es = rawes.Elastic(ELASTICSEARCH_URI)
 
     try:
-        print "Dropping index if exist..."
-        # drop existing index
+        print "Dropping index if exists..."
         es.delete('edict')
     except:
         print "No pre-existing index found"
