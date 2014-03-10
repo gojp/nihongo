@@ -4,3 +4,4 @@ tmp/
 *.pyc
 data/
 scripts/output.json
+app/routes
