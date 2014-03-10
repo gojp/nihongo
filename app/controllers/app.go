@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 
 	"code.google.com/p/go.crypto/bcrypt"
@@ -24,6 +25,12 @@ type App struct {
 type Word struct {
 	*models.Word
 }
+
+type ByCommon []Word
+
+func (a ByCommon) Len() int           { return len(a) }
+func (a ByCommon) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByCommon) Less(i, j int) bool { return a[i].Common == true }
 
 type PopularSearch struct {
 	Term string
@@ -50,6 +57,8 @@ func getWordList(hits [][]byte, query string) (wordList []Word) {
 		w.HighlightQuery(query)
 		wordList = append(wordList, w)
 	}
+
+	sort.Sort(ByCommon(wordList))
 	return wordList
 }
 
