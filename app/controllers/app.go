@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"code.google.com/p/go.crypto/bcrypt"
+	"github.com/gojp/japanese"
 	"github.com/gojp/nihongo/app/helpers"
 	"github.com/gojp/nihongo/app/models"
 	"github.com/gojp/nihongo/app/routes"
@@ -68,6 +69,10 @@ func (a App) Search(query string) revel.Result {
 	}
 	hits := helpers.Search(query)
 	fuzzy := false
+
+	godan, ichidan := japanese.DictionaryForm(query)
+
+	fmt.Println(godan, ichidan)
 
 	if len(hits) == 0 {
 		// no hits, so we make suggestions ("did you mean...")
