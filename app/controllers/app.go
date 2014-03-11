@@ -63,43 +63,38 @@ func getWordList(hits [][]byte, query string) (wordList []Word) {
 	return wordList
 }
 
-func (a App) Search(query string) revel.Result {
-	if len(query) == 0 {
-		return a.Redirect(App.Index)
-	}
-
+func doSearch(query string) (wordList []Word, fuzzy bool) {
 	hits, err := helpers.Search(query)
 	if err != nil {
 		log.Println(err)
 		panic("Error performing search")
 	}
 
-	h, k := helpers.ConvertQueryToKana(query)
+	h, _ := helpers.ConvertQueryToKana(query)
 
 	// katakana verbs are exceedingly rare, so if the input
 	// was katakana, we don't check verb roots
-	if k != query {
-		godan, ichidan := japanese.DictionaryForm(h)
 
-		// check godan verb (log errors)
-		godan_hits, err := helpers.HiraganaSearch(godan)
-		if err != nil {
-			log.Println(err)
-		}
-		// check ichidan verb (log errors)
-		ichidan_hits, err := helpers.HiraganaSearch(ichidan)
-		if err != nil {
-			log.Println(err)
-		}
+	godan, ichidan := japanese.DictionaryForm(h)
 
-		if len(godan_hits) > 0 {
-			hits = godan_hits
-		} else if len(ichidan_hits) > 0 {
-			hits = ichidan_hits
-		}
+	// check godan verb (log errors)
+	godan_hits, err := helpers.ExactSearch(godan)
+	if err != nil {
+		log.Println(err)
+	}
+	// check ichidan verb (log errors)
+	ichidan_hits, err := helpers.ExactSearch(ichidan)
+	if err != nil {
+		log.Println(err)
 	}
 
-	fuzzy := false
+	if len(godan_hits) > 0 {
+		hits = godan_hits
+	} else if len(ichidan_hits) > 0 {
+		hits = ichidan_hits
+	}
+
+	fuzzy = false
 	if len(hits) == 0 {
 		// no hits, so we make suggestions ("did you mean...")
 		hits, err = helpers.FuzzySearch(query)
@@ -110,7 +105,16 @@ func (a App) Search(query string) revel.Result {
 
 		fuzzy = true
 	}
-	wordList := getWordList(hits, query)
+	wordList = getWordList(hits, query)
+	return wordList, fuzzy
+}
+
+func (a App) Search(query string) revel.Result {
+	if len(query) == 0 {
+		return a.Redirect(App.Index)
+	}
+
+	wordList, fuzzy := doSearch(query)
 
 	return a.Render(wordList, fuzzy, query)
 }
@@ -125,25 +129,8 @@ func (c App) Details(query string) revel.Result {
 
 	query = strings.Replace(query, "_", " ", -1)
 
-	hits, err := helpers.Search(query)
-	if err != nil {
-		log.Println(err)
-		panic("Error performing search")
-	}
+	wordList, fuzzy := doSearch(query)
 
-	fuzzy := false
-
-	if len(hits) == 0 {
-		// no hits, so we make suggestions ("did you mean...")
-		hits, err = helpers.FuzzySearch(query)
-		if err != nil {
-			log.Println(err)
-			panic("Error performing search")
-		}
-		fuzzy = true
-	}
-
-	wordList := getWordList(hits, query)
 	pageTitle := query + " in Japanese"
 
 	description := ""
