@@ -37,14 +37,44 @@ elif es:
         "mappings": {
             "entry": {
                 "properties": {
-                    "english": {"type": "string"},
-                    "japanese": {"type": "string"},
-                    "furigana": {"type": "string"},
-                    "romaji": {"type": "string"},
+                    "english": {
+                        "type": "multi_field",
+                        "fields": {
+                            "english": {"type": "string", "index": "analyzed"},
+                            "exact": {"type": "string","index": "not_analyzed"}
+                        }
+                    },
+                    "japanese": {
+                        "type": "multi_field",
+                        "fields": {
+                            "japanese": {"type": "string", "index": "analyzed"},
+                            "exact": {"type": "string","index": "not_analyzed"}
+                        }
+                    },
+                    "furigana": {
+                        "type": "multi_field",
+                        "fields": {
+                            "furigana": {"type": "string", "index": "analyzed"},
+                            "exact": {"type": "string","index": "not_analyzed"}
+                        }
+                    },
+                    "romaji": {
+                        "type": "multi_field",
+                        "fields": {
+                            "romaji": {"type": "string", "index": "analyzed"},
+                            "exact": {"type": "string","index": "not_analyzed"}
+                        }
+                    },
                     "glosses": {
                         "properties": {
-                            "english": {"type": "string"},
-                            "tags": {"type": "string"},
+                            "english": {
+                                "type": "multi_field",
+                                "fields": {
+                                    "english": {"type": "string", "index": "analyzed"},
+                                    "exact": {"type": "string","index": "not_analyzed"}
+                                }
+                            },
+                            "tags": {"type": "string", "index": "not_analyzed"},
                             "field": {"type": "string"},
                             "related": {"type": "string"}
                         },
