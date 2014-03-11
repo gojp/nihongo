@@ -69,10 +69,12 @@ func (t AppTest) TestSearchResults() {
 	// wordList := getWordList(helpers.Search("hello"))
 	// t.AssertEqual(wordList[0].Japanese, "今日は")
 
-	wordList := getWordList(helpers.Search("kokoro"))
+	hits, _ := helpers.Search("kokoro")
+	wordList := getWordList(hits)
 	t.Assert(wordList[0].Japanese == "心")
 
-	wordList = getWordList(helpers.Search("心"))
+	hits, _ = helpers.Search("心")
+	wordList = getWordList(hits)
 	t.Assert(wordList[0].Japanese == "心")
 }
 
@@ -99,7 +101,8 @@ func (t AppTest) TestSearchResultScores() {
 	}
 
 	for _, word := range englishWords {
-		wordList := getWordList(helpers.Search(word.SearchTerm))
+		hits, _ := helpers.Search(word.SearchTerm)
+		wordList := getWordList(hits)
 		score += scoreEnglishPosition(wordList, word.English, word.ExpectedPosition)
 	}
 	finalScore := float64(score*100) / float64(10*len(englishWords))

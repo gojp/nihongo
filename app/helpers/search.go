@@ -22,7 +22,24 @@ func initElasticConnection() {
 	}
 }
 
-func Search(query string) (hits [][]byte) {
+func executeSearch(searchJson string) (hits [][]byte, err error) {
+	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
+	if err != nil {
+		return hits, err
+	}
+	for _, hit := range out.Hits.Hits {
+		var h interface{}
+		h, err = json.Marshal(&hit.Source)
+		if err != nil {
+			log.Println(err)
+		}
+
+		hits = append(hits, h.([]byte))
+	}
+	return hits, nil
+}
+
+func Search(query string) (hits [][]byte, err error) {
 	initElasticConnection()
 
 	query = strings.Replace(query, "\"", "\\\"", -1)
@@ -109,27 +126,36 @@ func Search(query string) (hits [][]byte) {
 			}
 		}`)
 
-	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
-	if err != nil {
-		log.Println(err)
-	}
+	hits, err = executeSearch(searchJson)
+	return hits, err
+}
 
-	for _, hit := range out.Hits.Hits {
-		var h interface{}
-		h, err = json.Marshal(&hit.Source)
-		if err != nil {
-			log.Println(err)
-		}
+// HiraganaSearch is an exact match search on the hiragna field
+func HiraganaSearch(query string) (hits [][]byte, err error) {
+	initElasticConnection()
 
-		hits = append(hits, h.([]byte))
-	}
-	return hits
+	query = strings.Replace(query, "\"", "\\\"", -1)
+
+	searchJson := fmt.Sprintf(`
+		{"query":
+			{"term":
+				{
+					"furigana.exact": "%s"
+				}
+			}
+		}`, query)
+
+	fmt.Println(searchJson)
+	hits, err = executeSearch(searchJson)
+	return hits, err
 }
 
 // FuzzySearch returns words similar to the search terms
 // provided, and not just exact matches.
-func FuzzySearch(query string) (hits [][]byte) {
+func FuzzySearch(query string) (hits [][]byte, err error) {
 	initElasticConnection()
+
+	query = strings.Replace(query, "\"", "\\\"", -1)
 
 	searchJson := fmt.Sprintf(`
 		{"query":
@@ -142,19 +168,6 @@ func FuzzySearch(query string) (hits [][]byte) {
 			}
 		}`, query)
 
-	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
-	if err != nil {
-		log.Println(err)
-	}
-
-	for _, hit := range out.Hits.Hits {
-		var h interface{}
-		h, err = json.Marshal(&hit.Source)
-		if err != nil {
-			log.Println(err)
-		}
-
-		hits = append(hits, h.([]byte))
-	}
-	return hits
+	hits, err = executeSearch(searchJson)
+	return hits, err
 }
