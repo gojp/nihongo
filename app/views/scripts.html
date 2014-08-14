@@ -26,7 +26,7 @@ $(function(){
   };
   var typeTimeout = null,
     lastSearch = null;
-  $(".main-search").focus().on("keyup", function(e){
+  $(".main-search").focus().change(function(e){
     var val = $(this).val();
     if (val.length == 0) {
       return;
