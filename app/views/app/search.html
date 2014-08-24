@@ -1,6 +1,9 @@
 {{if .fuzzy}}
 <div class="alert-fuzzy alert-info">We couldn't find anything that matched <strong>{{.query}}</strong>.{{if .wordList}} Did you mean one of these?{{end}}</div>
 {{end}}
+{{if .transformed}}
+<div class="alert-fuzzy alert-info">Showing results for <strong>{{.transformed}}</strong>, from the <strong>{{.verbForm}} verb</strong> form <strong>{{.query}}</strong>.</div>
+{{end}}
 <table class="results-table">
 {{$user := .user}}
 {{range .wordList}}

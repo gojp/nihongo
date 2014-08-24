@@ -63,7 +63,9 @@ func getWordList(hits [][]byte, query string) (wordList []Word) {
 	return wordList
 }
 
-func doSearch(query string) (wordList []Word, fuzzy bool) {
+func doSearch(query string) (wordList []Word, fuzzy bool, transformed, verbForm string) {
+	var finalQuery string = query
+
 	hits, err := helpers.Search(query)
 	if err != nil {
 		log.Println(err)
@@ -71,27 +73,58 @@ func doSearch(query string) (wordList []Word, fuzzy bool) {
 	}
 
 	h, _ := helpers.ConvertQueryToKana(query)
-
-	// katakana verbs are exceedingly rare, so if the input
-	// was katakana, we don't check verb roots
-
+	isVerb, verbForm := helpers.IdentifyVerb(h)
 	godan, ichidan := japanese.DictionaryForm(h)
+	same := godan == query || ichidan == query
 
-	// check godan verb (log errors)
-	godan_hits, err := helpers.ExactSearch(godan)
-	if err != nil {
-		log.Println(err)
-	}
-	// check ichidan verb (log errors)
-	ichidan_hits, err := helpers.ExactSearch(ichidan)
-	if err != nil {
-		log.Println(err)
-	}
+	if isVerb && !same {
+		// check godan verb
+		godanHits, err := helpers.ExactSearchVerb(godan, "v5")
+		if err != nil {
+			log.Println(err)
+			panic("Error performing search")
+		}
+		// check ichidan verb
+		ichidanHits, err := helpers.ExactSearchVerb(ichidan, "v1")
+		if err != nil {
+			log.Println(err)
+			panic("Error performing search")
+		}
 
-	if len(godan_hits) > 0 {
-		hits = godan_hits
-	} else if len(ichidan_hits) > 0 {
-		hits = ichidan_hits
+		words := getWordList(godanHits, godan)
+		foundGodan := false
+		for w := range words {
+			for _, p := range words[w].Pos {
+				if strings.HasPrefix(p, "v5") {
+					foundGodan = true
+				}
+			}
+		}
+
+		words = getWordList(ichidanHits, ichidan)
+		foundIchidan := false
+		for w := range words {
+			for _, p := range words[w].Pos {
+				if strings.HasPrefix(p, "v1") {
+					foundIchidan = true
+				}
+			}
+		}
+
+		if foundGodan && foundIchidan {
+			// could be either one
+			hits = godanHits
+			finalQuery = godan
+			transformed = godan
+		} else if foundGodan {
+			hits = godanHits
+			finalQuery = godan
+			transformed = godan
+		} else if foundIchidan {
+			hits = ichidanHits
+			finalQuery = ichidan
+			transformed = ichidan
+		}
 	}
 
 	fuzzy = false
@@ -105,8 +138,8 @@ func doSearch(query string) (wordList []Word, fuzzy bool) {
 
 		fuzzy = true
 	}
-	wordList = getWordList(hits, query)
-	return wordList, fuzzy
+	wordList = getWordList(hits, finalQuery)
+	return wordList, fuzzy, transformed, verbForm
 }
 
 func (a App) Search(query string) revel.Result {
@@ -114,9 +147,9 @@ func (a App) Search(query string) revel.Result {
 		return a.Redirect(App.Index)
 	}
 
-	wordList, fuzzy := doSearch(query)
+	wordList, fuzzy, transformed, verbForm := doSearch(query)
 
-	return a.Render(wordList, fuzzy, query)
+	return a.Render(wordList, fuzzy, query, transformed, verbForm)
 }
 
 func (c App) Details(query string) revel.Result {
@@ -129,7 +162,7 @@ func (c App) Details(query string) revel.Result {
 
 	query = strings.Replace(query, "_", " ", -1)
 
-	wordList, fuzzy := doSearch(query)
+	wordList, fuzzy, transformed, verbForm := doSearch(query)
 
 	pageTitle := query + " in Japanese"
 
@@ -145,7 +178,7 @@ func (c App) Details(query string) revel.Result {
 	}
 
 	user := c.connected()
-	return c.Render(wordList, query, pageTitle, user, description, fuzzy)
+	return c.Render(wordList, query, pageTitle, user, description, fuzzy, transformed, verbForm)
 }
 
 func (c App) SearchGet() revel.Result {

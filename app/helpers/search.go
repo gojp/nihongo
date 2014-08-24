@@ -130,29 +130,32 @@ func Search(query string) (hits [][]byte, err error) {
 	return hits, err
 }
 
-// ExactSearch is an exact match search on the hiragana and kanji fields
-func ExactSearch(query string) (hits [][]byte, err error) {
+// ExactSearchVerb is an exact match search on the hiragana and kanji fields
+// with a verb-only filter applied.
+func ExactSearchVerb(query string, prefix string) (hits [][]byte, err error) {
 	initElasticConnection()
 
 	query = strings.Replace(query, "\"", "\\\"", -1)
 
 	searchJson := fmt.Sprintf(`
-		{"query":
-			{"bool":
-				{
-				"should":
-					[
-					 {"term":{"hiragana.exact": "%s"}},
-					 {"term":{"japanese.exact": "%s"}}
-					],
-				"minimum_should_match" : 1
-				}
-			}
-		}`, query, query)
-
-	// fmt.Println(searchJson)
+	{
+        "query" : {
+            "filtered" : {
+                "filter" : {
+                    "bool" : {
+                        "should" : [
+                            { "term" : { "japanese.exact" : "%s" } },
+                            { "term" : { "furigana.exact" : "%s" } }
+                        ],
+                        "must" : [
+                            { "prefix" : { "pos" : "%s"}}
+                        ]
+                    }
+                }
+            }
+        }
+	}`, query, query, prefix)
 	hits, err = executeSearch(searchJson)
-	// fmt.Println("Hits:", len(hits))
 	return hits, err
 }
 
