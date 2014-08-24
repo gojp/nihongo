@@ -111,6 +111,7 @@ a, a:hover {
 .results-table {
   table-layout:fixed;
   width:100%;
+  clear: both;
 }
 .results-table td {
   padding: 10px;
