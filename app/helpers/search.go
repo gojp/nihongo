@@ -7,23 +7,25 @@ import (
 	"strings"
 
 	"github.com/gojp/kana"
-	"github.com/mattbaird/elastigo/api"
-	"github.com/mattbaird/elastigo/core"
+	elastigo "github.com/mattbaird/elastigo/lib"
 	"github.com/revel/revel"
 )
 
-func initElasticConnection() {
+func initElasticConnection() elastigo.Conn {
+	c := elastigo.NewConn()
 	elasticURL, _ := revel.Config.String("elastic.url")
-	api.Domain = elasticURL
+	c.Domain = elasticURL
 
 	elasticPort, found := revel.Config.String("elastic.port")
 	if found {
-		api.Port = string(elasticPort)
+		c.Port = string(elasticPort)
 	}
+	return *c
 }
 
 func executeSearch(searchJson string) (hits [][]byte, err error) {
-	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
+	c := initElasticConnection()
+	out, err := c.Search("edict", "entry", nil, searchJson)
 	if err != nil {
 		return hits, err
 	}
@@ -40,8 +42,6 @@ func executeSearch(searchJson string) (hits [][]byte, err error) {
 }
 
 func Search(query string) (hits [][]byte, err error) {
-	initElasticConnection()
-
 	query = strings.Replace(query, "\"", "\\\"", -1)
 
 	isLatin := kana.IsLatin(query)
@@ -162,8 +162,6 @@ func ExactSearchVerb(query string, prefix string) (hits [][]byte, err error) {
 // FuzzySearch returns words similar to the search terms
 // provided, and not just exact matches.
 func FuzzySearch(query string) (hits [][]byte, err error) {
-	initElasticConnection()
-
 	query = strings.Replace(query, "\"", "\\\"", -1)
 
 	searchJson := fmt.Sprintf(`
