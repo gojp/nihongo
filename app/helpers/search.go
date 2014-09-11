@@ -7,23 +7,24 @@ import (
 	"strings"
 
 	"github.com/gojp/kana"
-	"github.com/mattbaird/elastigo/api"
-	"github.com/mattbaird/elastigo/core"
+	elastigo "github.com/mattbaird/elastigo/lib"
 	"github.com/revel/revel"
 )
 
-func initElasticConnection() {
+func initElasticConnection() elastigo.Conn {
+	c := elastigo.NewConn()
 	elasticURL, _ := revel.Config.String("elastic.url")
-	api.Domain = elasticURL
+	c.Domain = elasticURL
 
 	elasticPort, found := revel.Config.String("elastic.port")
 	if found {
-		api.Port = string(elasticPort)
+		c.Port = string(elasticPort)
 	}
+	return *c
 }
 
 func Search(query string) (hits [][]byte) {
-	initElasticConnection()
+	c := initElasticConnection()
 
 	query = strings.Replace(query, "\"", "\\\"", -1)
 
@@ -109,7 +110,7 @@ func Search(query string) (hits [][]byte) {
 			}
 		}`)
 
-	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
+	out, err := c.Search("edict", "entry", nil, searchJson)
 	if err != nil {
 		log.Println(err)
 	}
@@ -129,7 +130,7 @@ func Search(query string) (hits [][]byte) {
 // FuzzySearch returns words similar to the search terms
 // provided, and not just exact matches.
 func FuzzySearch(query string) (hits [][]byte) {
-	initElasticConnection()
+	c := initElasticConnection()
 
 	searchJson := fmt.Sprintf(`
 		{"query":
@@ -142,7 +143,7 @@ func FuzzySearch(query string) (hits [][]byte) {
 			}
 		}`, query)
 
-	out, err := core.SearchRequest("edict", "entry", nil, searchJson)
+	out, err := c.Search("edict", "entry", nil, searchJson)
 	if err != nil {
 		log.Println(err)
 	}
