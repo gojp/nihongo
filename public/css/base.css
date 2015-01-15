@@ -57,7 +57,7 @@ a, a:hover {
   margin: 0;
   border-radius: 0;
   -moz-border-radius: 0;
-  -webkit-border-radius: 0; 
+  -webkit-border-radius: 0;
 }
 
 .search-form {
@@ -126,7 +126,7 @@ a, a:hover {
   cursor: pointer;
 }
 .word:nth-child(2n) {
-  background: #f3f3f3;
+  background: #fafafa;
 }
 .word .common {
   width: 70px;
