@@ -1,26 +1,13 @@
 language: go
 go:
-- 1.3
-services:
-- elasticsearch
+- 1.4
 before_install:
 - gofmt .
 install:
 - export PATH=$PATH:$HOME/gopath/bin
-- go get -v github.com/revel/cmd/revel
 - go get -v ./...
-script:
-- revel test github.com/gojp/nihongo dev HelpersTest
-- python scripts/test_edict2_parser.py
-notifications:
-  irc: chat.freenode.net#gojp
-env:
-  global:
-    secure: ! 'hQDoHFX2g+YCiNNL2EilFSB4wwdgt/HaJMfgbMWhxSeu7oDU3nldZNFOke3I
-
-      M88BCz2T2kwfIEQlS6vlrvcOWXCi8piPpiWHD0j2Xgv+4dKBAlfVQGoOcjij
-
-      mq2lF8Hf3B/jPy8jot5au57QZhUOQln1Eb4SW9d5O87ikzFA97k='
+test:
+- godep go test -v ./...
 deploy:
   provider: heroku
   api_key:

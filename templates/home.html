@@ -1,0 +1,168 @@
+{{define "body"}}
+<div id="dictionary" class="container">
+    <form class="search-bar" action="/search">
+        <div className="input-wrapper">
+            <input ref="text" class="input" type="text" name="text" placeholder="Enter Japanese, 漢字, romaji or English to search" value="{{.data.Search}}" />
+            <div ref="bar" class="loading-bar"></div>
+        </div>
+    </form>
+    <div id="entries" class="row entries">
+        {{ range .data.Entries }}
+        <div class="entry">
+            {{ if .Common}}
+            <span class="common label u-pull-right">Common</span>
+            {{ end}}
+            <h5 class="title">
+                <span class="word">{{ .Word }}</span><span class="furigana">{{ .Furigana }}</span>
+            </h5>
+            <p class="definition">{{ .Definition }}</p>
+        </div>
+        {{ end }}
+    </div>
+    </div>
+  </div>
+</div>
+<script src="http://fb.me/react-0.12.2.js"></script>
+<script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+<script type="text/jsx">
+var data = JSON.parse({{.json}});
+
+var Entry = React.createClass({
+    render: function() {
+        var common = '';
+        if (this.props.entry.common == true) {
+            common = <span className="common label u-pull-right">Common</span>;
+        }
+        return (
+            <div className="entry">
+                {common}
+                <h5 className="title">
+                    <a href={"/word/"+this.props.entry.id} title={this.props.entry.word+" - "+this.props.entry.definition}>
+                        <span className="word">{this.props.entry.word}</span>
+                    </a>
+                    <span className="furigana">{this.props.entry.furigana}</span>
+                </h5>
+                <p className="definition">{this.props.entry.definition}</p>
+            </div>
+        );
+    }
+});
+var EntryList = React.createClass({
+    render: function() {
+        if (this.props.data.length === 0) {
+            return (
+                <div className="entries">Your search returned no results</div>
+            );
+        }
+        var entryNodes = this.props.data.map(function(entry) {
+            return (
+                <Entry entry={entry} />
+            );
+        });
+        return (
+            <div className="row entries">
+                {entryNodes}
+            </div>
+       );
+    }
+});
+var SearchForm = React.createClass({
+    handleSubmit: function(e) {
+        e.preventDefault();
+        var text = this.refs.text.getDOMNode().value.trim();
+        if (!text) {
+          return;
+        }
+        this.props.onSearchSubmit({text: text}, this.refs.bar.getDOMNode(), true);
+    },
+    handleKeypress: function(e) {
+        var text = this.refs.text.getDOMNode().value.trim();
+        if (!text) {
+            return;
+        }
+        this.props.onSearchSubmit({text: text}, null, false);
+    },
+    componentDidMount: function() {
+        $(this.refs.text.getDOMNode()).focus().select();
+    },
+    render: function(){
+        return (
+            <form className="search-bar" onSubmit={this.handleSubmit} action="/search">
+                <div className="input-wrapper">
+                    <input ref="text" className="input" type="text" onChange={this.handleKeypress} placeholder="Enter Japanese, 漢字, romaji or English to search" defaultValue={this.props.search} />
+                    <div ref="bar" className="loading-bar"></div>
+                </div>
+            </form>
+        );
+    }
+});
+var Dictionary = React.createClass({
+    getInitialState: function() {
+        return {data: data};
+    },
+    componentDidMount: function() {
+        window.onpopstate = function(event) {
+            this.setState({data: history.state.data});
+        }.bind(this);
+    },
+    handleSearchSubmit: function(search, loadingBar, updateHistory) {
+        var t = null;
+        if (this.lastAjaxCall) {
+            this.lastAjaxCall.abort();
+        }
+        this.lastAjaxCall = $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            type: 'GET',
+            data: search,
+            success: function(data) {
+                this.setState({data: data});
+                if (updateHistory === true) {
+                    history.pushState({data: data}, search.text + " in Japanese | Japanese-English Dictionary", "/search/" + search.text);
+                }
+            }.bind(this),
+            error: function(xhr, status, err) {
+                if (xhr.status === 0 || xhr.readyState === 0) {
+                    // If either of these are true, then it's not a true error and we don't care,
+                    // because we probably aborted the request ourselves, or the user navigated away.
+                    return;
+                }
+                console.error(this.props.url, status, err.toString());
+            }.bind(this),
+            beforeSend: function() {
+                $(loadingBar).finish().
+                    removeClass('animate-bar').
+                    width(0).
+                    css({'opacity': '1.0'});
+                t = window.setTimeout( function() {
+                    $(loadingBar).
+                        addClass('animate-bar').
+                        width((Math.random() * 50) + "%");
+                }, 10 );
+            }.bind(this),
+            complete: function() {
+                clearTimeout(t);
+                $(loadingBar).
+                    width("100%").
+                    css({'opacity': '0.0'});
+                this.lastAjaxCall = null;
+            }.bind(this)
+        });
+    },
+    render: function() {
+        return (
+            <div>
+                <SearchForm search={this.state.data.search} onSearchSubmit={this.handleSearchSubmit} />
+                <EntryList data={this.state.data.entries} />
+            </div>
+        );
+    }
+});
+
+React.render(
+  <Dictionary url="/search" />,
+  document.getElementById('dictionary')
+);
+</script>
+{{end}}

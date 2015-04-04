@@ -1,1 +1,1 @@
-web: revel run github.com/gojp/nihongo prod $PORT
+web: nihongo -addr=0.0.0.0:$PORT
