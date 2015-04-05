@@ -84,30 +84,25 @@ func (a ByCommon) Less(i, j int) bool { return a[i].Common && !a[j].Common }
 // Entry slice with at most `limit` number of entries.
 func (d Dictionary) Search(s string, limit int) (results []Entry) {
 	results = []Entry{}
+	word := cleanWord(s)
 
-	if entryIDs := d.japanese.Get(cleanWord(s)); entryIDs != nil {
-		for _, eid := range entryIDs {
-			results = append(results, d.entries[eid])
-		}
-	}
-
-	if entryIDs := d.furigana.Get(cleanWord(s)); entryIDs != nil {
-		for _, eid := range entryIDs {
-			results = append(results, d.entries[eid])
-		}
-	}
-
-	if kana.IsLatin(cleanWord(s)) {
-		if entryIDs := d.furigana.Get(kana.RomajiToHiragana(cleanWord(s))); entryIDs != nil {
+	appendResults := func(f func(word string) []EntryID, word string) {
+		if entryIDs := f(word); entryIDs != nil {
 			for _, eid := range entryIDs {
 				results = append(results, d.entries[eid])
 			}
 		}
-		if entryIDs := d.furigana.Get(kana.RomajiToKatakana(cleanWord(s))); entryIDs != nil {
-			for _, eid := range entryIDs {
-				results = append(results, d.entries[eid])
-			}
-		}
+	}
+
+	appendResults(d.japanese.Get, word)
+	appendResults(d.furigana.Get, word)
+
+	if kana.IsLatin(word) {
+		hiragana := kana.RomajiToHiragana(word)
+		katakana := kana.RomajiToKatakana(word)
+
+		appendResults(d.furigana.Get, hiragana)
+		appendResults(d.furigana.Get, katakana)
 	}
 
 	// build a priority queue of relevant entries for english search terms,
