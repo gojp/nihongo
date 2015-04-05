@@ -2,11 +2,12 @@ package dictionary
 
 import (
 	"container/heap"
+	"io"
 	"sort"
 	"strings"
 
 	"github.com/gojp/kana"
-	"github.com/gojp/nihongo/edict2"
+	"github.com/shawnps/nihongo/edict2"
 )
 
 type EntryID uint64
@@ -34,19 +35,24 @@ func cleanWord(w string) string {
 	return strings.ToLower(strings.Trim(w, ",.()|`'\"!"))
 }
 
-func Load(path string) (Dictionary, error) {
+func Load(r io.Reader) (Dictionary, error) {
 	d := Dictionary{}
 	d.entries = map[EntryID]Entry{}
 	d.japanese = NewRadixTree()
 	d.furigana = NewRadixTree()
 	d.english = NewInvertedIndex(30)
 
-	entries, err := edict2.Parse(path)
-	if err != nil {
-		return d, err
-	}
-	for i, entry := range entries {
-		e := newEntry(&entry, uint64(i))
+	edict := edict2.New(r)
+	var i uint64
+	for edict.Scan() {
+		i++
+		err := edict.NextEntry()
+		if err == edict2.NoMoreEntries {
+			break
+		} else if err != nil {
+			return d, err
+		}
+		e := newEntry(edict.Entry(), i)
 		d.entries[e.ID] = *e
 		d.japanese.Insert(e.Japanese, e.ID)
 		d.furigana.Insert(e.Furigana, e.ID)

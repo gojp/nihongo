@@ -1,19 +1,21 @@
 package main
 
 import (
+	"compress/gzip"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
 	_ "net/http/pprof"
 
-	"github.com/gojp/nihongo/lib/dictionary"
 	"github.com/golang/gddo/httputil/header"
+	"github.com/shawnps/nihongo/lib/dictionary"
 )
 
 const (
@@ -35,8 +37,18 @@ var tmpl = make(map[string]*template.Template)
 func initialize() {
 	compileTemplates()
 
-	var err error
-	dict, err = dictionary.Load("data/edict2.json.gz")
+	file, err := os.Open("data/edict2.json.gz")
+	if err != nil {
+		log.Fatal("Could not load edict2.json.gz: ", err)
+	}
+	defer file.Close()
+
+	reader, err := gzip.NewReader(file)
+	if err != nil {
+		log.Fatal("Could not create reader: ", err)
+	}
+
+	dict, err = dictionary.Load(reader)
 	if err != nil {
 		log.Fatal("Could not load dictionary: ", err)
 	}

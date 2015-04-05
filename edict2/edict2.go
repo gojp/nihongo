@@ -2,10 +2,16 @@ package edict2
 
 import (
 	"bufio"
-	"compress/gzip"
 	"encoding/json"
-	"os"
+	"errors"
+	"io"
 )
+
+type EDict struct {
+	*bufio.Scanner
+	TokenType int
+	entry     *Entry
+}
 
 type Gloss struct {
 	Common  bool
@@ -30,28 +36,39 @@ type Entry struct {
 	Tags      []string
 }
 
-func Parse(path string) (entries []Entry, err error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return entries, err
+func New(r io.Reader) *EDict {
+	s := bufio.NewScanner(r)
+	edict := &EDict{
+		Scanner: s,
 	}
-	defer file.Close()
+	return edict
+}
 
-	reader, err := gzip.NewReader(file)
-	if err != nil {
-		return entries, err
+var NoMoreEntries error = errors.New("No more entries to read")
+
+func (edict *EDict) NextEntry() error {
+	for edict.Scan() {
+		e, err := parseEntry(edict.Bytes())
+		if err != nil {
+			return err
+		}
+		edict.entry = e
+		return nil
+	}
+	if err := edict.Err(); err != nil {
+		return err
 	}
 
-	scanner := bufio.NewScanner(reader)
-	for scanner.Scan() {
-		var e Entry
-		json.Unmarshal(scanner.Bytes(), &e)
-		entries = append(entries, e)
-	}
+	return NoMoreEntries
+}
 
-	if err := scanner.Err(); err != nil {
-		return entries, err
-	}
+func (e *EDict) Entry() *Entry {
+	return e.entry
+}
 
-	return entries, nil
+func parseEntry(entry []byte) (*Entry, error) {
+	var e Entry
+	json.Unmarshal(entry, &e)
+
+	return &e, nil
 }
