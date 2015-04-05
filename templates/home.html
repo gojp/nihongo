@@ -38,7 +38,7 @@ var Entry = React.createClass({
             <div className="entry">
                 {common}
                 <h5 className="title">
-                    <a href={"/word/"+this.props.entry.id} title={this.props.entry.word+" - "+this.props.entry.definition}>
+                    <a href={"/search/"+this.props.entry.word} title={this.props.entry.word+" - "+this.props.entry.definition}>
                         <span className="word">{this.props.entry.word}</span>
                     </a>
                     <span className="furigana">{this.props.entry.furigana}</span>
