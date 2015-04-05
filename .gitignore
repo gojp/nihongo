@@ -2,5 +2,3 @@ test-results/
 tmp/
 *.swp
 *.pyc
-data/
-scripts/output.json
