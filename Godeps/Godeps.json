@@ -4,7 +4,7 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/gojp/kana",
-			"Rev": "fcc3bda78c4129d4b2fb3d7cf0e90647d147f855"
+			"Rev": "689a57251feea39a43d585ea7cccbe712f215f26"
 		},
 		{
 			"ImportPath": "github.com/golang/gddo/httputil/header",
