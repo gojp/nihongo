@@ -2,6 +2,7 @@ package dictionary
 
 import (
 	"container/heap"
+	"sort"
 	"strings"
 
 	"github.com/gojp/kana"
@@ -66,6 +67,12 @@ func (d Dictionary) Get(id EntryID) (e Entry, found bool) {
 	e, found = d.entries[id]
 	return
 }
+
+type ByCommon []Entry
+
+func (a ByCommon) Len() int           { return len(a) }
+func (a ByCommon) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByCommon) Less(i, j int) bool { return a[i].Common && !a[j].Common }
 
 // Search takes a search string provided by the user, and returns a matching
 // Entry slice with at most `limit` number of entries.
@@ -139,5 +146,7 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 		item := heap.Pop(&pq).(*Item)
 		results = append(results, d.entries[item.id])
 	}
+
+	sort.Sort(ByCommon(results))
 	return
 }
