@@ -1,0 +1,122 @@
+/* Base style overrides */
+html {
+	font-size: 9px;
+}
+body {
+	font-family: 'Open Sans', sans-serif;
+}
+a {
+	text-decoration: none;
+}
+
+/* Sticky footer */
+html, body {
+    height: 100%;
+}
+.page-wrap {
+    min-height: 100%;
+    /* equal to footer height */
+    margin-bottom: -4rem;
+}
+.page-wrap:after {
+    content: "";
+    display: block;
+}
+.site-footer, .page-wrap:after {
+    height: 4rem;
+}
+.site-footer {
+    background: #eee;
+    text-align: center;
+}
+.site-footer p {
+	margin: 0;
+    line-height: 4rem;
+}
+
+/* Page elements */
+
+.logo {
+	text-align: center;
+}
+.logo img {
+	max-width: 400px;
+	display: none;
+}
+
+.search-bar {
+	padding: 2em 0 0;
+}
+.search-bar form {
+	margin: 0;
+}
+.search-bar .input {
+	margin: 0;
+	font-size: 2rem;
+	height: 5rem;
+	line-height: 5rem;
+	vertical-align: middle;
+	width: 100%;
+	font-weight: 300;
+	background-color: transparent;
+}
+.search-bar .input-wrapper {
+	position: relative;
+}
+
+.loading-bar {
+	position: absolute;
+	background: #D5F4FD;
+	height: 5rem;
+	top: 0;
+	-moz-border-radius: 1px;
+	-webkit-border-radius: 1px;
+	border-radius: 1px;
+	z-index: -1;
+	opacity: 1;
+}
+.animate-bar {
+  -moz-transition: width 200ms ease-in-out, opacity 1s ease-in-out;
+  -ms-transition: width 200ms ease-in-out, opacity 1s ease-in-out;
+  -o-transition: width 200ms ease-in-out, opacity 1s ease-in-out;
+  -webkit-transition: width 200ms ease-in-out, opacity 1s ease-in-out;
+  transition: width 200ms ease-in-out, opacity 1s ease-in-out;
+}
+
+.entries {
+	font-size: 1.8rem;
+}
+.entry {
+	border-bottom: 1px solid #eee;
+	margin-bottom: 1rem;
+}
+.entry .title {
+	margin: 0.5rem 0;
+}
+.entry .word {
+	margin-right: 1rem;
+}
+.entry .pinyin {
+	color: #aaa;
+	font-weight: 300;
+}
+.label {
+	display: inline-block;
+	height: 34px;
+	padding: 0 10px;
+	color: #f3f3f3;
+	text-align: center;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 34px;
+	letter-spacing: .1rem;
+	text-transform: uppercase;
+	text-decoration: none;
+	white-space: nowrap;
+	background-color: rgb(0, 188, 212);
+	border-radius: 4px;
+	border: none;
+	cursor: pointer;
+	box-sizing: border-box;
+	margin: 4px 0;
+}

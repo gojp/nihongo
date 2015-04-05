@@ -1,0 +1,14 @@
+{
+	"ImportPath": "github.com/gojp/nihongo",
+	"GoVersion": "go1.4.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/gojp/kana",
+			"Rev": "fcc3bda78c4129d4b2fb3d7cf0e90647d147f855"
+		},
+		{
+			"ImportPath": "github.com/golang/gddo/httputil/header",
+			"Rev": "bb1ac60e4a278210b176c686ed0c3c5620354ccd"
+		}
+	]
+}

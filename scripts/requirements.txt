@@ -1,4 +1,0 @@
-pyes
-pymongo
-romkan
-rawes
