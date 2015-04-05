@@ -31,7 +31,7 @@ func newEntry(entry *edict2.Entry, id uint64) *Entry {
 }
 
 func cleanWord(w string) string {
-	return strings.ToLower(strings.Trim(w, ",-.()|`'\"!"))
+	return strings.ToLower(strings.Trim(w, ",.()|`'\"!"))
 }
 
 func Load(path string) (Dictionary, error) {
