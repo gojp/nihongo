@@ -59,19 +59,17 @@ func (r *RadixTree) findLastMatchingNode(key string) (n *RadixNode, elementsFoun
 			}
 		}
 
-		// Was an edge found?
-		if nextEdge != nil {
-
-			// Set the next node to explore
-			n = nextEdge.target
-
-			// Increment elements found based on the label stored at the edge
-			elementsFound += len(nextEdge.label)
-		} else {
-
+		if nextEdge == nil {
 			// terminate loop
 			break
 		}
+
+		// Was an edge found?
+		// Set the next node to explore
+		n = nextEdge.target
+
+		// Increment elements found based on the label stored at the edge
+		elementsFound += len(nextEdge.label)
 	}
 
 	return n, elementsFound
@@ -116,13 +114,18 @@ func (r *RadixTree) Insert(key string, id EntryID) {
 		} else {
 			oldEdge := n.edges[sharedEdge]
 
-			newChild := RadixNode{}
-			n.edges[sharedEdge] = RadixEdge{target: &newChild, label: prefix}
+			child := RadixNode{}
+			n.edges[sharedEdge] = RadixEdge{target: &child, label: prefix}
 
-			newNode := RadixNode{edges: []RadixEdge{}, ids: []EntryID{id}}
-			newEdgeLeft := RadixEdge{target: &newNode, label: suffix[len(prefix):]}
-			newEdgeRight := RadixEdge{target: oldEdge.target, label: oldEdge.label[len(prefix):]}
-			newChild.edges = []RadixEdge{newEdgeLeft, newEdgeRight}
+			node := RadixNode{edges: []RadixEdge{}, ids: []EntryID{id}}
+			var left RadixEdge
+			if prefix == suffix {
+				left = RadixEdge{target: &node, label: prefix}
+			} else {
+				left = RadixEdge{target: &node, label: suffix[len(prefix):]}
+			}
+			right := RadixEdge{target: oldEdge.target, label: oldEdge.label[len(prefix):]}
+			child.edges = []RadixEdge{left, right}
 		}
 	}
 }

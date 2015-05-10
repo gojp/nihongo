@@ -1,9 +1,24 @@
 package dictionary
 
-import "testing"
+import (
+	"compress/gzip"
+	"fmt"
+	"os"
+	"testing"
+)
 
 func loadDict() (*Dictionary, error) {
-	dict, err := Load("../../data/edict2.json.gz")
+	file, err := os.Open("../../data/edict2.json.gz")
+	if err != nil {
+		return nil, fmt.Errorf("could not load edict2.json.gz file: ", err)
+	}
+	defer file.Close()
+
+	reader, err := gzip.NewReader(file)
+	if err != nil {
+		return nil, fmt.Errorf("could not create reader: ", err)
+	}
+	dict, err := Load(reader)
 	if err != nil {
 		return nil, err
 	}
