@@ -98,11 +98,11 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 	appendResults(d.furigana.Get, word)
 
 	if kana.IsLatin(word) {
-		hiragana := kana.RomajiToHiragana(word)
-		katakana := kana.RomajiToKatakana(word)
+		hira := kana.RomajiToHiragana(word)
+		kata := kana.RomajiToKatakana(word)
 
-		appendResults(d.furigana.Get, hiragana)
-		appendResults(d.furigana.Get, katakana)
+		appendResults(d.furigana.Get, hira)
+		appendResults(d.furigana.Get, kata)
 	}
 
 	// build a priority queue of relevant entries for english search terms,
@@ -115,17 +115,19 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 			break
 		}
 		cw := cleanWord(w)
-		if r := d.english.Get(cw); r != nil {
-			for i := range r {
-				scores[r[i].id] += r[i].score
-				for _, w2 := range words {
-					cw2 := cleanWord(w2)
-					if w != w2 {
-						if d.english.Test(cw2, r[i].id) {
-							scores[r[i].id] *= 10 // for now double score without verifying bloom-filter correctness
-						} else {
-							scores[r[i].id] /= 10
-						}
+		r := d.english.Get(cw)
+		if r == nil {
+			continue
+		}
+		for i := range r {
+			scores[r[i].id] += r[i].score
+			for _, w2 := range words {
+				cw2 := cleanWord(w2)
+				if w != w2 {
+					if d.english.Test(cw2, r[i].id) {
+						scores[r[i].id] *= 10 // for now double score without verifying bloom-filter correctness
+					} else {
+						scores[r[i].id] /= 10
 					}
 				}
 			}
