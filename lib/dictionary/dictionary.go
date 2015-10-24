@@ -54,8 +54,8 @@ func Load(r io.Reader) (Dictionary, error) {
 		}
 		e := newEntry(edict.Entry(), i)
 		d.entries[e.ID] = *e
-		d.japanese.Insert(e.Japanese, e.ID)
-		d.furigana.Insert(e.Furigana, e.ID)
+		d.japanese.Insert([]rune(e.Japanese), e.ID)
+		d.furigana.Insert([]rune(e.Furigana), e.ID)
 
 		for _, gloss := range e.Glosses {
 			words := strings.Split(gloss.English, " ")
@@ -86,7 +86,7 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 	results = []Entry{}
 	word := cleanWord(s)
 
-	appendResults := func(f func(word string) []EntryID, word string) {
+	appendResults := func(f func(word []rune) []EntryID, word []rune) {
 		if entryIDs := f(word); entryIDs != nil {
 			for _, eid := range entryIDs {
 				results = append(results, d.entries[eid])
@@ -94,15 +94,15 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 		}
 	}
 
-	appendResults(d.japanese.Get, word)
-	appendResults(d.furigana.Get, word)
+	appendResults(d.japanese.Get, []rune(word))
+	appendResults(d.furigana.Get, []rune(word))
 
 	if kana.IsLatin(word) {
 		hira := kana.RomajiToHiragana(word)
 		kata := kana.RomajiToKatakana(word)
 
-		appendResults(d.furigana.Get, hira)
-		appendResults(d.furigana.Get, kata)
+		appendResults(d.furigana.Get, []rune(hira))
+		appendResults(d.furigana.Get, []rune(kata))
 	}
 
 	// build a priority queue of relevant entries for english search terms,

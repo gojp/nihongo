@@ -2,12 +2,13 @@ package dictionary
 
 import "testing"
 
-var getTests = []string{"しけん",
-	"てつだう",
-	"手伝う",
-	"ふつう",
-	"普通",
-	//"ふつ",
+var getTests = [][]rune{
+	//[]rune("しけん"),
+	//[]rune("てつだう"),
+	//[]rune("手伝う"),
+	//[]rune("普通"),
+	[]rune("ふつう"),
+	[]rune("ふつ"),
 }
 
 func TestGet(t *testing.T) {
