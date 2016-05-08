@@ -36,7 +36,7 @@ type RadixNode struct {
 }
 
 func (n RadixNode) IsLeaf() bool {
-	return n.ids != nil
+	return len(n.ids) > 0
 }
 
 func (n RadixNode) Value() []EntryID {
@@ -114,7 +114,7 @@ func (r *RadixTree) Insert(key string, id EntryID) {
 		} else {
 			oldEdge := n.edges[sharedEdge]
 
-			child := RadixNode{}
+			child := RadixNode{ids: []EntryID{id}}
 			n.edges[sharedEdge] = RadixEdge{target: &child, label: prefix}
 
 			node := RadixNode{edges: []RadixEdge{}, ids: []EntryID{id}}
@@ -134,7 +134,7 @@ func (r *RadixTree) Get(key string) []EntryID {
 	n, elementsFound := r.findLastMatchingNode(key)
 
 	// A match is found if we arrive at a leaf node and have used up exactly len(key) elements
-	if n != nil && n.IsLeaf() && elementsFound == len(key) {
+	if n != nil && elementsFound == len(key) {
 		return n.Value()
 	}
 
