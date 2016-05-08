@@ -90,23 +90,23 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 	results = []Entry{}
 	word := cleanWord(s)
 
-	appendResults := func(f func(word string) []EntryID, word string) {
-		if entryIDs := f(word); entryIDs != nil {
+	appendResults := func(f func(word string, max int) []EntryID, word string, max int) {
+		if entryIDs := f(word, max); entryIDs != nil {
 			for _, eid := range entryIDs {
 				results = append(results, d.entries[eid])
 			}
 		}
 	}
 
-	appendResults(d.japanese.Get, word)
-	appendResults(d.furigana.Get, word)
+	appendResults(d.japanese.FindWordsWithPrefix, word, 5)
+	appendResults(d.furigana.FindWordsWithPrefix, word, 5)
 
 	if kana.IsLatin(word) {
 		hira := kana.RomajiToHiragana(word)
 		kata := kana.RomajiToKatakana(word)
 
-		appendResults(d.furigana.Get, hira)
-		appendResults(d.furigana.Get, kata)
+		appendResults(d.furigana.FindWordsWithPrefix, hira, 5)
+		appendResults(d.furigana.FindWordsWithPrefix, kata, 5)
 	}
 
 	// build a priority queue of relevant entries for english search terms,
