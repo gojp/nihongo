@@ -43,6 +43,33 @@ func (n RadixNode) Value() []EntryID {
 	return n.ids
 }
 
+func (n RadixNode) FindPrefixedEntries(max int) (entries []EntryID) {
+	entries = []EntryID{}
+
+	stack := []*RadixNode{&n}
+	added := map[EntryID]bool{}
+
+	var node *RadixNode
+	for len(stack) > 0 {
+		node, stack = stack[len(stack)-1], stack[:len(stack)-1]
+		if node.IsLeaf() {
+			for _, v := range node.Value() {
+				if _, ok := added[v]; !ok {
+					entries = append(entries, v)
+				}
+				added[v] = true
+			}
+		}
+		if len(entries) >= max {
+			return
+		}
+		for i := range node.edges {
+			stack = append(stack, node.edges[i].target)
+		}
+	}
+	return
+}
+
 func (r *RadixTree) findLastMatchingNode(key string) (n *RadixNode, elementsFound int) {
 	n = r.Root
 	elementsFound = 0
@@ -139,4 +166,44 @@ func (r *RadixTree) Get(key string) []EntryID {
 	}
 
 	return nil
+}
+
+func (r *RadixTree) FindWordsWithPrefix(key string, max int) []EntryID {
+	words := []EntryID{}
+
+	n, elementsFound := r.findLastMatchingNode(key)
+	if n != nil {
+		if elementsFound == len(key) {
+			children := n.FindPrefixedEntries(max - len(words))
+			words = append(words, children...)
+		} else {
+			// check if an outgoing edge shares a prefix with us
+			suffix := key[elementsFound:]
+			prefix := ""
+			sharedEdge := -1
+
+			for i := range n.edges {
+			inner:
+				for u := 0; u < len(n.edges[i].label) && u < len(suffix); u++ {
+					if n.edges[i].label[u] == suffix[u] {
+						prefix += suffix[u : u+1]
+					} else {
+						break inner
+					}
+				}
+				// there can be at most one outgoing edge that shares a prefix
+				if len(prefix) > 0 {
+					sharedEdge = i
+					break
+				}
+			}
+
+			if sharedEdge >= 0 {
+				children := n.edges[sharedEdge].target.FindPrefixedEntries(max - len(words))
+				words = append(words, children...)
+			}
+		}
+	}
+
+	return words
 }
