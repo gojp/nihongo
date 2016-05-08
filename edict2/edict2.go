@@ -47,19 +47,13 @@ func New(r io.Reader) *EDict {
 var NoMoreEntries error = errors.New("No more entries to read")
 
 func (edict *EDict) NextEntry() error {
-	for edict.Scan() {
-		e, err := parseEntry(edict.Bytes())
-		if err != nil {
-			return err
-		}
-		edict.entry = e
-		return nil
-	}
-	if err := edict.Err(); err != nil {
+	e, err := parseEntry(edict.Bytes())
+	if err != nil {
 		return err
 	}
+	edict.entry = e
 
-	return NoMoreEntries
+	return nil
 }
 
 func (e *EDict) Entry() *Entry {

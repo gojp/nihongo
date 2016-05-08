@@ -47,7 +47,7 @@ func Load(r io.Reader) (Dictionary, error) {
 	for edict.Scan() {
 		i++
 		err := edict.NextEntry()
-		if err == edict2.NoMoreEntries {
+		if err == io.EOF {
 			break
 		} else if err != nil {
 			return d, err
@@ -65,6 +65,10 @@ func Load(r io.Reader) (Dictionary, error) {
 		}
 
 	}
+	if err := edict.Err(); err != nil {
+		return d, err
+	}
+
 	return d, nil
 }
 
