@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gojp/kana"
-	"github.com/shawnps/nihongo/edict2"
+	"github.com/gojp/nihongo/edict2"
 )
 
 type EntryID uint64

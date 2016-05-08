@@ -14,8 +14,8 @@ import (
 
 	_ "net/http/pprof"
 
+	"github.com/gojp/nihongo/lib/dictionary"
 	"github.com/golang/gddo/httputil/header"
-	"github.com/shawnps/nihongo/lib/dictionary"
 )
 
 const (
