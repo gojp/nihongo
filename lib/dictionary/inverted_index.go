@@ -6,7 +6,7 @@ import (
 	"log"
 	"sort"
 
-	"github.com/shawnps/nihongo/lib/bloomfilter"
+	"github.com/gojp/nihongo/lib/bloomfilter"
 )
 
 type InvertedIndex struct {
