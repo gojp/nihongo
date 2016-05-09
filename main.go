@@ -23,6 +23,7 @@ const (
 	description = "The world's best Japanese dictionary."
 )
 
+// Entry is a dictionary entry
 type Entry struct {
 	Word       string `json:"word"`
 	Furigana   string `json:"furigana"`
