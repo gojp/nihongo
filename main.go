@@ -83,7 +83,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
-		log.Println(err)
+		log.Println("ERROR:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -141,7 +141,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 	}
 	jsonData, err := json.Marshal(data)
 	if err != nil {
-		log.Println(err)
+		log.Println("ERROR:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
