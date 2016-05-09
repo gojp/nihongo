@@ -1,5 +1,6 @@
 nihongo.io
 =========
+[![Go Report Card](https://goreportcard.com/badge/github.com/gojp/nihongo)](https://goreportcard.com/report/github.com/gojp/nihongo)
 
 Open source Japanese Dictionary written in Go: [http://nihongo.io](http://nihongo.io)
 
