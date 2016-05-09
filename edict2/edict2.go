@@ -3,7 +3,6 @@ package edict2
 import (
 	"bufio"
 	"encoding/json"
-	"errors"
 	"io"
 )
 
@@ -43,8 +42,6 @@ func New(r io.Reader) *EDict {
 	}
 	return edict
 }
-
-var NoMoreEntries error = errors.New("No more entries to read")
 
 func (edict *EDict) NextEntry() error {
 	e, err := parseEntry(edict.Bytes())
