@@ -10,13 +10,13 @@ import (
 func loadDict() (*Dictionary, error) {
 	file, err := os.Open("../../data/edict2.json.gz")
 	if err != nil {
-		return nil, fmt.Errorf("could not load edict2.json.gz file: ", err)
+		return nil, fmt.Errorf("could not load edict2.json.gz file: %s", err)
 	}
 	defer file.Close()
 
 	reader, err := gzip.NewReader(file)
 	if err != nil {
-		return nil, fmt.Errorf("could not create reader: ", err)
+		return nil, fmt.Errorf("could not create reader: %s", err)
 	}
 	dict, err := Load(reader)
 	if err != nil {
