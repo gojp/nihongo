@@ -160,22 +160,24 @@ func search(w http.ResponseWriter, r *http.Request) {
 	if isXMLHTTP || wantsJSON > wantsHTML {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(jsonData)
-	} else {
-		pageTitle := text + " in Japanese | " + title
-		description := fmt.Sprintf("Japanese to English for %s", text)
-		if len(data.Entries) > 0 {
-			e := data.Entries[0]
-			description = fmt.Sprintf("%s (%s) - %s", e.Word, e.Furigana, e.Definition)
-		}
 
-		m := map[string]interface{}{
-			"json":        string(jsonData),
-			"data":        data,
-			"title":       pageTitle,
-			"description": description,
-		}
-		tmpl["home.html"].ExecuteTemplate(w, "base", m)
+		return
 	}
+
+	pageTitle := text + " in Japanese | " + title
+	description := fmt.Sprintf("Japanese to English for %s", text)
+	if len(data.Entries) > 0 {
+		e := data.Entries[0]
+		description = fmt.Sprintf("%s (%s) - %s", e.Word, e.Furigana, e.Definition)
+	}
+
+	m := map[string]interface{}{
+		"json":        string(jsonData),
+		"data":        data,
+		"title":       pageTitle,
+		"description": description,
+	}
+	tmpl["home.html"].ExecuteTemplate(w, "base", m)
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
