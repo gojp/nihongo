@@ -182,10 +182,6 @@ func about(w http.ResponseWriter, r *http.Request) {
 	tmpl["about.html"].ExecuteTemplate(w, "base", nil)
 }
 
-func static(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, r.URL.Path[1:])
-}
-
 func main() {
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
