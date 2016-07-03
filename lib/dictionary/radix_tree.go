@@ -147,12 +147,13 @@ func (r *RadixTree) Insert(key string, id EntryID) {
 			node := RadixNode{edges: []RadixEdge{}, ids: []EntryID{id}}
 			var left RadixEdge
 			if prefix == suffix {
-				left = RadixEdge{target: &node, label: prefix}
+				child.ids = append(child.ids, id)
 			} else {
 				left = RadixEdge{target: &node, label: suffix[len(prefix):]}
+				child.edges = []RadixEdge{left}
 			}
 			right := RadixEdge{target: oldEdge.target, label: oldEdge.label[len(prefix):]}
-			child.edges = []RadixEdge{left, right}
+			child.edges = append(child.edges, right)
 		}
 	}
 }
