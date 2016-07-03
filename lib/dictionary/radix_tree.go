@@ -141,7 +141,7 @@ func (r *RadixTree) Insert(key string, id EntryID) {
 		} else {
 			oldEdge := n.edges[sharedEdge]
 
-			child := RadixNode{ids: []EntryID{id}}
+			child := RadixNode{ids: []EntryID{}}
 			n.edges[sharedEdge] = RadixEdge{target: &child, label: prefix}
 
 			node := RadixNode{edges: []RadixEdge{}, ids: []EntryID{id}}
