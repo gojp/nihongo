@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gojp/kana.png?branch=master)](https://travis-ci.org/gojp/kana) [![go report card](http://goreportcard.com/badge/gojp/kana)](http://goreportcard.com/gojp/kana)
+[![Build Status](https://travis-ci.org/gojp/kana.png?branch=master)](https://travis-ci.org/gojp/kana) [![go report card](https://goreportcard.com/badge/github.com/gojp/kana)](http://goreportcard.com/report/github.com/gojp/kana)
 
 kana
 =======
@@ -17,7 +17,7 @@ Usage
 
 To use *kana*, you'll have to import it:
 
-    import "github.com/hermanschaaf/kana"
+    import "github.com/gojp/kana"
     ...
     k := kana.NewKana()
 

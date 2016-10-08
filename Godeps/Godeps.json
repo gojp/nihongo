@@ -1,14 +1,14 @@
 {
 	"ImportPath": "github.com/gojp/nihongo",
 	"GoVersion": "go1.6",
-	"GodepVersion": "v58",
+	"GodepVersion": "v74",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/gojp/kana",
-			"Rev": "689a57251feea39a43d585ea7cccbe712f215f26"
+			"Rev": "4ba0cc2ccd731edff2943073ef076517c2494ad4"
 		},
 		{
 			"ImportPath": "github.com/golang/gddo/httputil/header",
