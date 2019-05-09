@@ -89,8 +89,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func search(w http.ResponseWriter, r *http.Request) {
-	defer timeTrack(time.Now(), "/search")
-
 	// check GET and POST parameters for "text" field
 	err := r.ParseForm()
 	if err != nil {
@@ -98,11 +96,15 @@ func search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	text := r.Form.Get("text")
+	trackText := fmt.Sprintf("/search?text=%s", text)
 
 	// if no "text" field is present, we check the URL
 	if text == "" {
 		text = strings.TrimPrefix(r.URL.Path, "/search/")
+		trackText = fmt.Sprintf("/search/%s", text)
 	}
+
+	defer timeTrack(time.Now(), trackText)
 
 	// if we still don't have text, we redirect to the home page
 	if text == "" {
