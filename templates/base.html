@@ -1,4 +1,5 @@
-{{define "base"}}<!DOCTYPE html>
+{{ define "header" }}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -25,7 +26,7 @@
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/skeleton.css">
     <link rel="stylesheet" href="/static/css/base.css">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
 
     <script type="text/javascript">
       var _gaq = _gaq || [];
@@ -39,12 +40,4 @@
     </script>
 
 </head>
-<body>
-    <div class="page-wrap">
-        {{template "body" .}}
-    </div>
-    <footer class="site-footer">
-       <p><a href="/about">About</a></p>
-    </footer>
-</body>
-{{end}}
+{{ end }}

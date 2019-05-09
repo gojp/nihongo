@@ -1,15 +1,22 @@
-{{define "body"}}
-<div class="container">
-	<div class="row">
-		<h1><a href="/">Nihongo.io</a></h1>
-		<h3>What is Nihongo.io?</h3>
-		<p>The fastest, most reliable and free online Japanese dictionary that's there when you need it.</p>
-		<h3>Why is it so fast?</h3>
-		<p>It's written in Go, and uses a custom-made full text search engine adapted for searching Japanese dictionary entries. Ping <a href="https://twitter.com/ironzeb">Herman</a> if you're interested in knowing more.</p>
-		<h3>Who are you?</h3>
-		<p>We are <a href="https://twitter.com/ironzeb">Herman</a> and <a href="https://twitter.com/shawnps">Shawn</a></p>
-		<h3>Where do you get the dictionary entries?</h3>
-		<p>Right now, all dictionary entries are obtained from <a href="http://www.csse.monash.edu.au/~jwb/edict.html">EDICT2</a></p>
-	</div>
-</div>
-{{end}}
+{{ template "header" . }}
+<body>
+    <div class="page-wrap">
+        <div class="container">
+        	<div class="row">
+        		<h1><a href="/">Nihongo.io</a></h1>
+        		<h3>What is Nihongo.io?</h3>
+        		<p>The fastest, most reliable and free online Japanese dictionary that's there when you need it.</p>
+        		<h3>Why is it so fast?</h3>
+        		<p>It's written in Go, and uses a custom-made full text search engine adapted for searching Japanese dictionary entries. Ping <a href="https://twitter.com/ironzeb">Herman</a> if you're interested in knowing more.</p>
+        		<h3>Who are you?</h3>
+        		<p>We are <a href="https://twitter.com/ironzeb">Herman</a> and <a href="https://twitter.com/shawnps">Shawn</a></p>
+        		<h3>Where do you get the dictionary entries?</h3>
+        		<p>Right now, all dictionary entries are obtained from <a href="http://www.csse.monash.edu.au/~jwb/edict.html">EDICT2</a></p>
+        	</div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+       <p><a href="/about">About</a></p>
+    </footer>
+</body>
