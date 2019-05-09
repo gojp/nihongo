@@ -12,8 +12,6 @@ import (
 	"strings"
 	"time"
 
-	_ "net/http/pprof"
-
 	"github.com/gojp/nihongo/lib/dictionary"
 	"github.com/golang/gddo/httputil/header"
 )
@@ -22,6 +20,8 @@ const (
 	title       = "Nihongo.io"
 	description = "The world's best Japanese dictionary."
 )
+
+var templates = template.Must(template.ParseFiles("templates/home.html", "templates/about.html", "templates/base.html"))
 
 // Entry is a dictionary entry
 type Entry struct {
@@ -33,11 +33,7 @@ type Entry struct {
 
 var dict dictionary.Dictionary
 
-var tmpl = make(map[string]*template.Template)
-
 func initialize() {
-	compileTemplates()
-
 	file, err := os.Open("data/edict2.json.gz")
 	if err != nil {
 		log.Fatal("Could not load edict2.json.gz: ", err)
@@ -55,22 +51,13 @@ func initialize() {
 	}
 }
 
-func compileTemplates() {
-	t := func(s string) string {
-		return "templates/" + s
-	}
-
-	tmpl["home.html"] = template.Must(template.ParseFiles(t("home.html"), t("base.html")))
-	tmpl["about.html"] = template.Must(template.ParseFiles(t("about.html"), t("base.html")))
-}
-
 type templateData struct {
 	Search  string  `json:"search"`
 	Entries []Entry `json:"entries"`
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
-	defer timeTrack(time.Now(), "/")
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	// defer timeTrack(time.Now(), "/")
 
 	if r.URL.Path[1:] != "" {
 		http.NotFound(w, r)
@@ -87,14 +74,18 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	m := map[string]interface{}{
-		"json":        string(jsonData),
+		"json":        template.HTML(string(jsonData)),
 		"data":        data,
 		"title":       title,
 		"description": description,
 	}
 
-	tmpl["home.html"].ExecuteTemplate(w, "base", m)
+	err = templates.ExecuteTemplate(w, "home.html", m)
+	if err != nil {
+		log.Println("ERROR:", err)
+	}
 }
 
 func search(w http.ResponseWriter, r *http.Request) {
@@ -159,7 +150,8 @@ func search(w http.ResponseWriter, r *http.Request) {
 	}
 	if isXMLHTTP || wantsJSON > wantsHTML {
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(jsonData)
+		b := []byte(template.HTML(string(jsonData)))
+		w.Write(b)
 
 		return
 	}
@@ -172,44 +164,41 @@ func search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m := map[string]interface{}{
-		"json":        string(jsonData),
+		"json":        template.HTML(string(jsonData)),
 		"data":        data,
 		"title":       pageTitle,
 		"description": description,
 	}
-	tmpl["home.html"].ExecuteTemplate(w, "base", m)
+
+	err = templates.ExecuteTemplate(w, "home.html", m)
+	if err != nil {
+		log.Println("ERROR:", err)
+	}
 }
 
-func about(w http.ResponseWriter, r *http.Request) {
-	tmpl["about.html"].ExecuteTemplate(w, "base", nil)
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
+	err := templates.ExecuteTemplate(w, "about.html", nil)
+	if err != nil {
+		log.Println("ERROR:", err)
+	}
 }
 
 func main() {
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
-
-	var (
-		addr string
-		dev  bool
-	)
+	var addr string
 	flag.StringVar(&addr, "addr", "127.0.0.1:8080", "address to run on")
-	flag.BoolVar(&dev, "dev", false, "whether to run with a reduced dictionary (for faster boot times)")
 	flag.Parse()
 
 	initialize()
 
-	http.HandleFunc("/", home)
+	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/search", search)
 	http.HandleFunc("/search/", search)
-	http.HandleFunc("/about", about)
+	http.HandleFunc("/about", aboutHandler)
 	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
 
-	log.Printf("Running server on addr %s", addr)
-	if dev {
-		log.Println("Running in development mode, templates will automatically reload")
-	}
-	http.ListenAndServe(addr, nil)
+	log.Printf("Running on %s ...", addr)
+
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
 func timeTrack(start time.Time, name string) {
