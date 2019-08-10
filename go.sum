@@ -1,0 +1,6 @@
+github.com/gojp/kana v0.0.0-20190807083046-6df52a1d1c33 h1:8h9Bq5A6Vm+wtnX0iLvlTFIGFKaoNWySBf/Vwcf8TYE=
+github.com/gojp/kana v0.0.0-20190807083046-6df52a1d1c33/go.mod h1:kWp5hDdJQqnZ2E3SQNQe+iejY63SZ+JdlbnW+qn7vxY=
+github.com/gojp/kana v0.1.0 h1:8bd0WXAObhYpyFA3pF17YImnYyVshw0bcXS+ybNFYQk=
+github.com/gojp/kana v0.1.0/go.mod h1:kWp5hDdJQqnZ2E3SQNQe+iejY63SZ+JdlbnW+qn7vxY=
+github.com/golang/gddo v0.0.0-20190419222130-af0f2af80721 h1:KRMr9A3qfbVM7iV/WcLY/rL5LICqwMHLhwRXKu99fXw=
+github.com/golang/gddo v0.0.0-20190419222130-af0f2af80721/go.mod h1:xEhNfoBDX1hzLm2Nf80qUvZ2sVwoMZ8d6IE2SrsQfh4=
