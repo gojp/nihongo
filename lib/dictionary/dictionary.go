@@ -88,11 +88,21 @@ func (a ByCommon) Less(i, j int) bool { return a[i].Common && !a[j].Common }
 // Entry slice with at most `limit` number of entries.
 func (d Dictionary) Search(s string, limit int) (results []Entry) {
 	results = []Entry{}
+	resultsMap := map[EntryID]bool{}
+
 	word := cleanWord(s)
 
 	appendResults := func(f func(word string, max int) []EntryID, word string, max int) {
 		if entryIDs := f(word, max); entryIDs != nil {
 			for _, eid := range entryIDs {
+				// some entries have the same Japanese and Furigana fields, so we should
+				// only add those to the results slice once
+				if _, found := resultsMap[eid]; found {
+					continue
+				}
+
+				resultsMap[eid] = true
+
 				results = append(results, d.entries[eid])
 			}
 		}
@@ -118,11 +128,13 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 		if i > 10 {
 			break
 		}
+
 		cw := cleanWord(w)
 		r := d.english.Get(cw)
 		if r == nil {
 			continue
 		}
+
 		for i := range r {
 			scores[r[i].id] += r[i].score
 			for _, w2 := range words {
@@ -137,6 +149,7 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 			}
 		}
 	}
+
 	pq := make(PriorityQueue, len(scores))
 	i := 0
 	for id, priority := range scores {
@@ -147,6 +160,7 @@ func (d Dictionary) Search(s string, limit int) (results []Entry) {
 		}
 		i++
 	}
+
 	heap.Init(&pq)
 	// Take the items out; they arrive in decreasing priority order.
 	for pq.Len() > 0 && len(results) < 10 {

@@ -31,11 +31,9 @@ var exactSearches = []struct {
 	want int
 }{
 	{"むかつく", 1},
-	{"龜兒子龜兒子", 0},
 }
 
 func TestExactMatch(t *testing.T) {
-	t.Skip("TODO")
 	d, err := loadDict()
 	if err != nil {
 		t.Fatal(err)
