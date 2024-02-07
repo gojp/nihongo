@@ -2,13 +2,13 @@ package main
 
 import (
 	"compress/gzip"
+	"embed"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -21,7 +21,16 @@ const (
 	description = "The world's best Japanese dictionary."
 )
 
-var templates = template.Must(template.ParseFiles("templates/home.html", "templates/about.html", "templates/base.html"))
+var (
+	//go:embed templates/*
+	content embed.FS
+
+	//go:embed data/*
+	data embed.FS
+
+	//go:embed static/*
+	static embed.FS
+)
 
 // Entry is a dictionary entry
 type Entry struct {
@@ -34,7 +43,7 @@ type Entry struct {
 var dict dictionary.Dictionary
 
 func initialize() {
-	file, err := os.Open("data/edict2.json.gz")
+	file, err := data.Open("data/edict2.json.gz")
 	if err != nil {
 		log.Fatal("Could not load edict2.json.gz: ", err)
 	}
@@ -82,7 +91,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		"description": description,
 	}
 
-	err = templates.ExecuteTemplate(w, "home.html", m)
+	t, err := template.ParseFS(content, "templates/home.html")
+	if err != nil {
+		log.Println("ERROR:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = t.ExecuteTemplate(w, "home.html", m)
 	if err != nil {
 		log.Println("ERROR:", err)
 	}
@@ -172,14 +188,28 @@ func search(w http.ResponseWriter, r *http.Request) {
 		"description": description,
 	}
 
-	err = templates.ExecuteTemplate(w, "home.html", m)
+	t, err := template.ParseFS(content, "templates/home.html")
+	if err != nil {
+		log.Println("ERROR:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = t.ExecuteTemplate(w, "home.html", m)
 	if err != nil {
 		log.Println("ERROR:", err)
 	}
 }
 
 func aboutHandler(w http.ResponseWriter, r *http.Request) {
-	err := templates.ExecuteTemplate(w, "about.html", nil)
+	t, err := template.ParseFS(content, "templates/*.html")
+	if err != nil {
+		log.Println("ERROR:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = t.ExecuteTemplate(w, "about.html", nil)
 	if err != nil {
 		log.Println("ERROR:", err)
 	}
@@ -196,7 +226,7 @@ func main() {
 	http.HandleFunc("/search", search)
 	http.HandleFunc("/search/", search)
 	http.HandleFunc("/about", aboutHandler)
-	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
+	http.Handle("/static/", http.FileServer(http.FS(static)))
 
 	log.Printf("Running on %s ...", addr)
 
