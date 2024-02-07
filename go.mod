@@ -1,6 +1,6 @@
 module github.com/gojp/nihongo
 
-go 1.20
+go 1.22
 
 require (
 	github.com/gojp/kana v0.1.0
